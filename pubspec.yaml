@@ -1,0 +1,67 @@
+name: remote_vrc_chatbox
+
+description: A new Flutter project.
+
+publish_to: 'none'
+
+version: 0.0.2
+
+environment:
+  sdk: '>=3.1.5 <4.0.0'
+
+dependencies:
+  flutter:
+    sdk: flutter
+  web_socket_channel: ^2.4.0
+  flutter_localizations:
+    sdk: flutter
+  cupertino_icons: ^1.0.2
+  font_awesome_flutter: ^10.6.0
+  url_launcher: ^6.2.1
+  path_provider: ^2.1.1
+  path: ^1.8.0
+  intl: ^0.18.1
+  fluttertoast: ^8.2.4
+  osc: ^1.0.0
+  receive_sharing_intent: ^1.4.5
+  speech_to_text: ^6.4.0
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+  flutter_lints: ^2.0.0
+  flutter_launcher_icons: ^0.13.1
+  flutter_native_splash: ^2.3.5
+
+flutter:
+  assets:
+    - assets/images/
+  uses-material-design: true
+  fonts:
+    - family: Din
+      fonts:
+        - asset: assets\fonts\din1451alt.ttf
+    - family: NotoJP
+      fonts:
+        - asset: assets\fonts\NotoSansJP-Regular.ttf
+
+
+flutter_icons:
+  android: true
+  ios: true
+  image_path: 'assets/images/fg.png'
+  adaptive_icon_background: '#ffffff'
+  adaptive_icon_foreground: 'assets/images/fg.png'
+
+
+flutter_native_splash:
+  color: '#ffffff'
+  image: 'assets/images/fg.png'
+  color_dark: '#ffffff'
+  image_dark: 'assets/images/fg.png'
+  fullscreen: true
+  android_12:
+    icon_background_color: '#ffffff'
+    image: 'assets/images/fg.png'
+    icon_background_color_dark: '#ffffff'
+    image_dark: 'assets/images/fg.png'
