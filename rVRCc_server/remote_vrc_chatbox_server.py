@@ -1,7 +1,7 @@
 import datetime, argparse, socket, base64, threading, io, ctypes, time
 
 from pythonosc import udp_client
-import win32gui, win32con, win32clipboard
+import win32clipboard
 from websocket_server import WebsocketServer
 from pystray import Icon, Menu, MenuItem
 from PIL import Image
@@ -38,27 +38,31 @@ def message_received(client_, server, message:str):
     if (prefix:="[remote_vrc_chatbox_action:paste]") in message:
         flag = False
         message = message.removeprefix(prefix)
-        win32gui.SetForegroundWindow(win32gui.FindWindow(None, "VRChat"))
-        win32clipboard.OpenClipboard()
-        prev_pb = win32clipboard.GetClipboardData()
-        win32clipboard.CloseClipboard()
+        # pythoncom.CoInitialize()
+        # shell = win32com.client.Dispatch("WScript.Shell")
+        # shell.SendKeys('%')
+        # win32gui.SetForegroundWindow(win32gui.FindWindow(None, "VRChat"))
+        # pythoncom.CoUninitialize()
+        # win32clipboard.OpenClipboard()
+        # prev_pb = win32clipboard.GetClipboardData()
+        # win32clipboard.CloseClipboard()
 
         win32clipboard.OpenClipboard()
         win32clipboard.EmptyClipboard()
         win32clipboard.SetClipboardText(message)
         win32clipboard.CloseClipboard()
 
-        ctypes.windll.user32.keybd_event(win32con.VK_CONTROL, 0, 0, 0)
-        ctypes.windll.user32.keybd_event(ord('V'), 0, 0, 0)
-        ctypes.windll.user32.keybd_event(ord('V'), 0, win32con.KEYEVENTF_KEYUP, 0)
-        ctypes.windll.user32.keybd_event(win32con.VK_CONTROL, 0, win32con.KEYEVENTF_KEYUP, 0)
+        # ctypes.windll.user32.keybd_event(win32con.VK_CONTROL, 0, 0, 0)
+        # ctypes.windll.user32.keybd_event(ord('V'), 0, 0, 0)
+        # ctypes.windll.user32.keybd_event(ord('V'), 0, win32con.KEYEVENTF_KEYUP, 0)
+        # ctypes.windll.user32.keybd_event(win32con.VK_CONTROL, 0, win32con.KEYEVENTF_KEYUP, 0)
 
-        time.sleep(1)
+        # time.sleep(1)
 
-        win32clipboard.OpenClipboard()
-        win32clipboard.EmptyClipboard()
-        win32clipboard.SetClipboardText(prev_pb)
-        win32clipboard.CloseClipboard()
+        # win32clipboard.OpenClipboard()
+        # win32clipboard.EmptyClipboard()
+        # win32clipboard.SetClipboardText(prev_pb)
+        # win32clipboard.CloseClipboard()
 
     nowtime = datetime.datetime.now().time().replace(microsecond=0)
     id = client_["id"]
@@ -72,7 +76,6 @@ server = WebsocketServer(port=41129, host=socket.gethostbyname(socket.gethostnam
 server.set_fn_new_client(new_client)
 server.set_fn_client_left(client_left)
 server.set_fn_message_received(message_received)
-# webbrowser.open(f"http://wi11oh.com/dev/vcs/vrc_chatbox_sender?localIP={socket.gethostbyname(socket.gethostname())}", new=1, autoraise=True)
 
 
 
