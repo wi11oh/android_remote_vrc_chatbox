@@ -69,6 +69,10 @@ windows側で rVRCc_server を動かしていて、且つ通信方式を 【webs
 
 <img src="./readme_images/9.png" width="250px"> <img src="./readme_images/16.png" width="250px"> <img src="./readme_images/15.png" width="250px">
 
+## TODO(今後予定)
+
+- クリップボード共有ボタンを入力欄が空の状態で押すとPC側のクリップボードを取得する機能を付けたい
+
 ## ダウンロード
 
 ⚠ ベータ版ですので何かあっても責任取れません ⚠
