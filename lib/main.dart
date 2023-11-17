@@ -140,26 +140,28 @@ class MyFormState extends State<MyForm> {
 
     debugPrint("connect");
     _ipAddr = value;
-    _channel = WebSocketChannel.connect(Uri.parse("ws://$value:41129"));
-    _streamSubscription = _channel.stream.listen(
-      (message) {
-      },
-      onDone: () {
-        try {
-          reconnectWebsocket();
-        } catch (e) {
-          debugPrint("$e");
-        }
-      },
-      onError: (e) {
-        try {
-          reconnectWebsocket();
-        } catch (e) {
-          debugPrint("$e");
-        }
-      }
-    );
 
+    if (_isWebsocket) {
+      _channel = WebSocketChannel.connect(Uri.parse("ws://$value:41129"));
+      _streamSubscription = _channel.stream.listen(
+        (message) {
+        },
+        onDone: () {
+          try {
+            reconnectWebsocket();
+          } catch (e) {
+            debugPrint("$e");
+          }
+        },
+        onError: (e) {
+          try {
+            reconnectWebsocket();
+          } catch (e) {
+            debugPrint("$e");
+          }
+        }
+      );
+    }
   }
 
 
