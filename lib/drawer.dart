@@ -393,7 +393,6 @@ class InDrawerWidgetState extends State<InDrawerWidget> {
                 color: Color.fromARGB(255, 19, 19, 19),
               ),
             ),
-            subtitle: const Text("金くれ"),
             onTap: () {
               launchUrl(
                 Uri.parse("https://wi11oh.com/links/"),
@@ -414,7 +413,6 @@ class InDrawerWidgetState extends State<InDrawerWidget> {
                 color: Color.fromARGB(255, 19, 19, 19),
               ),
             ),
-            subtitle: const Text("つまんね～"),
             onTap: () {
               Navigator.of(context).push(
                 MaterialPageRoute(
