@@ -5,6 +5,9 @@ flutterってクロスプラットフォームやろ！！と思ったあなた�
 
 スマホからVRChatのチャットボックスに文字を飛ばせます。
 
+<img src="./readme_images/0.png" width="250px"> → <img src="./readme_images/m1.png" width="400px">
+
+
 ## windows側にも何かインストールする感じ？
 
 入れなくても動きます！！！スマホにアプリインストールして文字打つだけ！　【OSCモード】
