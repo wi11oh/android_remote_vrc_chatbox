@@ -237,7 +237,7 @@ https://creativecommons.org/licenses/by/4.0/
         // body: CustomLicensePage(),
         body: LicensePage(
           applicationName: "remote vrc chatbox",
-          applicationVersion: "v0.0.1",
+          applicationVersion: "v0.0.3",
           applicationIcon: Container(
             margin: const EdgeInsets.all(20),
             child: ClipRRect(
