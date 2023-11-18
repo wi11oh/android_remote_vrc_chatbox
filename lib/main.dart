@@ -138,30 +138,30 @@ class MyFormState extends State<MyForm> {
       debugPrint("$e");
     }
 
-    debugPrint("connect");
     _ipAddr = value;
 
-    if (_isWebsocket) {
-      _channel = WebSocketChannel.connect(Uri.parse("ws://$value:41129"));
-      _streamSubscription = _channel.stream.listen(
-        (message) {
-        },
-        onDone: () {
-          try {
-            reconnectWebsocket();
-          } catch (e) {
-            debugPrint("$e");
-          }
-        },
-        onError: (e) {
-          try {
-            reconnectWebsocket();
-          } catch (e) {
-            debugPrint("$e");
-          }
+
+    debugPrint("connect");
+    _channel = WebSocketChannel.connect(Uri.parse("ws://$value:41129"));
+    _streamSubscription = _channel.stream.listen(
+      (message) {
+      },
+      onDone: () {
+        try {
+          reconnectWebsocket();
+        } catch (e) {
+          debugPrint("$e");
         }
-      );
-    }
+      },
+      onError: (e) {
+        try {
+          reconnectWebsocket();
+        } catch (e) {
+          debugPrint("$e");
+        }
+      }
+    );
+
   }
 
 
@@ -174,6 +174,14 @@ class MyFormState extends State<MyForm> {
       await Future.delayed(const Duration(seconds: 5), () {});
       connectToWebSocket();
     }
+  }
+
+
+
+
+  void disconnectWebsocket() async {
+    _streamSubscription.cancel();
+    debugPrint("disconnect");
   }
 
 
@@ -317,7 +325,11 @@ class MyFormState extends State<MyForm> {
           )
         ),
       ),
-      drawer: InDrawerWidget(reconnectWebsocketCallback: reconnectWebsocket, releadConnSetting: readConnSet,),
+      drawer: InDrawerWidget(
+        reconnectWebsocketCallback: reconnectWebsocket,
+        releadConnSetting: readConnSet,
+        disconnectWebsocket: disconnectWebsocket
+      ),
       body: Column(
         children: <Widget>[
           Expanded(

@@ -17,8 +17,13 @@ import 'package:fluttertoast/fluttertoast.dart';
 class InDrawerWidget extends StatefulWidget {
   final VoidCallback reconnectWebsocketCallback;
   final VoidCallback releadConnSetting;
+  final VoidCallback disconnectWebsocket;
 
-  const InDrawerWidget({Key? key, required this.reconnectWebsocketCallback, required this.releadConnSetting}) : super(key: key);
+  const InDrawerWidget({Key? key,
+    required this.reconnectWebsocketCallback,
+    required this.releadConnSetting,
+    required this.disconnectWebsocket,
+  }) : super(key: key);
 
   @override
   InDrawerWidgetState createState() => InDrawerWidgetState();
@@ -185,14 +190,51 @@ class InDrawerWidgetState extends State<InDrawerWidget> {
                         color: const Color.fromARGB(255, 19, 19, 19),
                         onPressed:() {
 
-                          try {
-                            wSwitch(iptxconn.text, "rvc_setting.txt");
-                          } catch (e) {
-                            debugPrint("$e");
+                          final ipv4Regex = RegExp(
+                            r'^(\d{1,3})\.(\d{1,3})\.(\d{1,3})\.(\d{1,3})$',
+                            multiLine: false,
+                            caseSensitive: true,
+                          );
+
+
+                          bool isValidIPv4(String input) {
+                            if (!ipv4Regex.hasMatch(input)) {
+                              return false;
+                            }
+
+                            List<int> segments = input.split('.').map((s) => int.parse(s)).toList();
+                            for (int segment in segments) {
+                              if (segment < 0 || segment > 255) {
+                                return false;
+                              }
+                            }
+
+                            return true;
                           }
 
-                          Navigator.pop(context);
-                          _showDialog(context);
+                          if (isValidIPv4(iptxconn.text)) {
+                            debugPrint("allow=============================================");
+
+                            try {
+                              wSwitch(iptxconn.text, "rvc_setting.txt");
+                            } catch (e) {
+                              debugPrint("$e");
+                            }
+
+                            Navigator.pop(context);
+                            _showDialog(context);
+                          } else {
+                            debugPrint("disallow=============================================");
+                            Navigator.pop(context);
+                            Fluttertoast.showToast(
+                              msg: "有効なIPv4アドレスではありません",
+                              gravity: ToastGravity.BOTTOM,
+                              toastLength: Toast.LENGTH_LONG,
+                              backgroundColor: const Color.fromARGB(255, 19, 19, 19),
+                              textColor: Colors.white,
+                              fontSize: 20
+                            );
+                          }
                         },
                         icon: const FaIcon(FontAwesomeIcons.rotateLeft)
                       ),
@@ -212,16 +254,51 @@ class InDrawerWidgetState extends State<InDrawerWidget> {
                       )
                     ),
                     onFieldSubmitted: (value) {
+                      final ipv4Regex = RegExp(
+                        r'^(\d{1,3})\.(\d{1,3})\.(\d{1,3})\.(\d{1,3})$',
+                        multiLine: false,
+                        caseSensitive: true,
+                      );
 
-                      try {
-                        wSwitch(iptxconn.text, "rvc_setting.txt");
-                      } catch (e) {
-                        debugPrint("$e");
+
+                      bool isValidIPv4(String input) {
+                        if (!ipv4Regex.hasMatch(input)) {
+                          return false;
+                        }
+
+                        List<int> segments = input.split('.').map((s) => int.parse(s)).toList();
+                        for (int segment in segments) {
+                          if (segment < 0 || segment > 255) {
+                            return false;
+                          }
+                        }
+
+                        return true;
                       }
 
-                      Navigator.pop(context);
-                      _showDialog(context);
+                      if (isValidIPv4(iptxconn.text)) {
+                        debugPrint("allow=============================================");
 
+                        try {
+                          wSwitch(iptxconn.text, "rvc_setting.txt");
+                        } catch (e) {
+                          debugPrint("$e");
+                        }
+
+                        Navigator.pop(context);
+                        _showDialog(context);
+                      } else {
+                        debugPrint("disallow=============================================");
+                        Navigator.pop(context);
+                        Fluttertoast.showToast(
+                          msg: "有効なIPv4アドレスではありません",
+                          gravity: ToastGravity.BOTTOM,
+                          toastLength: Toast.LENGTH_LONG,
+                          backgroundColor: const Color.fromARGB(255, 19, 19, 19),
+                          textColor: Colors.white,
+                          fontSize: 20
+                        );
+                      }
                     },
                   ),
                   Center(
@@ -357,6 +434,10 @@ class InDrawerWidgetState extends State<InDrawerWidget> {
                 }
 
                 widget.releadConnSetting();
+
+                if (! _isWebsocket) {
+                  widget.disconnectWebsocket();
+                }
 
               });
             },

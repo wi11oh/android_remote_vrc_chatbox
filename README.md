@@ -10,9 +10,15 @@ flutterってクロスプラットフォームやろ！！と思ったあなた�
 
 ## windows側にも何かインストールする感じ？
 
-入れなくても動きます！！！スマホにアプリインストールして文字打つだけ！　【OSCモード】
+***入れなくても動きます！！！*** スマホにアプリインストールして文字打つだけ！　【OSCモード】
 
 でも一緒に配布してる rVRCc server ってやつをwindowsに入れるてるとクリップボード共有ができてスマホからiwasyncとかにURL貼り付けれるので便利！！！ 　【websocketモード】
+
+## 事前準備
+
+VRC側のパイメニューでOSCをEnable（右側）にしておいてください
+
+<img src="./readme_images/pi1.png" width="250px"> <img src="./readme_images/pi2.png" width="250px"> <img src="./readme_images/pi3.png" width="250px">
 
 ## 機能
 
@@ -56,7 +62,7 @@ windows側で rVRCc_server を動かしていて、且つ通信方式を 【webs
 
 ## rVRCc_server について
 
-前述の通りクリップボード共有機能を使わないのであれば必要ありません。
+ℹ ***前述の通りクリップボード共有機能を使わないのであれば必要ありません。***
 
 - VRChatが起動したのを検知すると自動で立ち上がり、逆にVRChatの終了を検知すると自動で終了します。
 
