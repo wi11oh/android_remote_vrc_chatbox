@@ -7,6 +7,7 @@ import 'dart:io';
 import 'package:remote_vrc_chatbox/drawer.dart';
 
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'package:web_socket_channel/web_socket_channel.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:receive_sharing_intent/receive_sharing_intent.dart';
@@ -17,8 +18,8 @@ import 'package:speech_to_text/speech_to_text.dart';
 
 
 
-void main() => runApp(const MyApp());
 
+void main() => runApp(const MyApp());
 
 
 
@@ -70,6 +71,11 @@ class MyFormState extends State<MyForm> {
   SpeechToText speechToText = SpeechToText();
   bool isListenning = false;
 
+  // late OSCSocket _server;
+
+
+
+
 
 
   @override
@@ -78,6 +84,7 @@ class MyFormState extends State<MyForm> {
     super.initState();
     readConnSet();
     connectToWebSocket();
+    // setOSCServer();
 
     _intentDataStreamSubscription = ReceiveSharingIntent.getTextStream().listen((String value) {
       setState(() {
@@ -106,8 +113,30 @@ class MyFormState extends State<MyForm> {
   void dispose() {
     _streamSubscription.cancel();
     _intentDataStreamSubscription.cancel();
+    _channel.sink.close();
+    // _server.close();
     super.dispose();
   }
+
+
+
+
+  // void setOSCServer() async {
+
+  //   for (var interface in await  NetworkInterface.list()) {
+  //     print('== Interface: ${interface.name} ==');
+  //     for (var addr in interface.addresses) {
+  //       print(
+  //           '!!!!!!!!!!!!!!!!!!!!!!${addr.address} ${addr.host} ${addr.isLoopback} ${addr.rawAddress} ${addr.type.name}');
+  //     }
+  //   }
+
+  //   _server = OSCSocket(serverPort: 41129);
+  //   _server.listen((msg) {
+  //     print("==================================================================================${msg.toString()}");
+  //     txc.text = msg.toString();
+  //   });
+  // }
 
 
 
@@ -133,7 +162,9 @@ class MyFormState extends State<MyForm> {
     String value = "192.168.0.10";
 
     try {
-      value = await load("rvc_setting.txt");
+      final p = await SharedPreferences.getInstance();
+      value = p.getString("ip") ?? "192.168.0.10";
+      // value = await load("rvc_setting.txt");
     } catch (e) {
       debugPrint("$e");
     }
@@ -141,25 +172,11 @@ class MyFormState extends State<MyForm> {
     _ipAddr = value;
 
 
-    debugPrint("connect");
+    debugPrint("connect  $value");
     _channel = WebSocketChannel.connect(Uri.parse("ws://$value:41129"));
     _streamSubscription = _channel.stream.listen(
       (message) {
       },
-      onDone: () {
-        try {
-          reconnectWebsocket();
-        } catch (e) {
-          debugPrint("$e");
-        }
-      },
-      onError: (e) {
-        try {
-          reconnectWebsocket();
-        } catch (e) {
-          debugPrint("$e");
-        }
-      }
     );
 
   }
@@ -171,6 +188,7 @@ class MyFormState extends State<MyForm> {
     // await Future.delayed(const Duration(milliseconds: 500));
     // _streamSubscription.cancel();
     if (_isWebsocket) {
+      _channel.sink.close();
       await Future.delayed(const Duration(seconds: 5), () {});
       connectToWebSocket();
     }
@@ -180,7 +198,7 @@ class MyFormState extends State<MyForm> {
 
 
   void disconnectWebsocket() async {
-    _streamSubscription.cancel();
+    _channel.sink.close();
     debugPrint("disconnect");
   }
 
@@ -196,16 +214,18 @@ class MyFormState extends State<MyForm> {
 
   Future<void> readConnSet() async {
 
-    String value = "false";
+    bool value = false;
     try {
-      value = await load("conn_setting.txt");
+      final p = await SharedPreferences.getInstance();
+      value = p.getBool("isWebsocket") ?? false;
+      // value = await load("conn_setting.txt");
     } catch (e) {
       debugPrint("$e");
     }
 
-    bool b = value.toLowerCase() == 'true';
+    // bool b = value.toLowerCase() == 'true';
     setState(() {
-      _isWebsocket = b;
+      _isWebsocket = value;
     });
 
   }
@@ -272,7 +292,6 @@ class MyFormState extends State<MyForm> {
     String text = text_;
     send(text);
   }
-
   submit2 () {
     String text = txc.text;
     send(text);

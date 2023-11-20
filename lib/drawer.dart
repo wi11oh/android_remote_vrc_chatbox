@@ -4,10 +4,10 @@ import 'package:flutter/services.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:remote_vrc_chatbox/thirdparty_nts.dart';
 import 'package:url_launcher/url_launcher.dart';
-import 'package:path_provider/path_provider.dart';
 import 'dart:async';
 import 'dart:io';
 import 'package:fluttertoast/fluttertoast.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 
 
@@ -50,23 +50,15 @@ class InDrawerWidgetState extends State<InDrawerWidget> {
 
 
   Future<void> _showDialog(BuildContext context) async {
-    String value = " -ERROR!- ";
+    String value = "192.168.0.10";
 
-    Future<File> getFilePath() async {
-      final directory = await getTemporaryDirectory();
-      return File("${directory.path}/rvc_setting.txt");
+    try {
+      final p = await SharedPreferences.getInstance();
+      value = p.getString("ip") ?? "ERROR";
+      // value = await load("rvc_setting.txt");
+    } catch (e) {
+      debugPrint("$e");
     }
-
-    Future<String> load() async {
-      final file = await getFilePath();
-      return file.readAsString();
-    }
-
-    Future<void> getIPfromtxt() async {
-      value = await load();
-    }
-
-    await getIPfromtxt();
 
     final outerContext = context;
     return showDialog(
@@ -99,22 +91,66 @@ class InDrawerWidgetState extends State<InDrawerWidget> {
 
 
 
-  Future<void> wSwitch(String tf, String name) async {
+  Future<void> setIP(String value) async {
 
-    Future<File> getFilePath() async {
-      final directory = await getTemporaryDirectory();
-      return File("${directory.path}/$name");
-    }
+    // Future<File> getFilePath() async {
+    //   final directory = await getTemporaryDirectory();
+    //   return File("${directory.path}/$name");
+    // }
 
-    void write() async {
-      getFilePath().then((File file) {
-        file.writeAsString(tf);
-      });
-    }
+    // void write() async {
+    //   getFilePath().then((File file) {
+    //     file.writeAsString(tf);
+    //   });
+    // }
 
-    write();
+    final p = await SharedPreferences.getInstance();
+    p.setString("ip", value);
+
 
   }
+
+  Future<void> setConnectPtcl(bool value) async {
+    final p = await SharedPreferences.getInstance();
+    p.setBool("isWebsocket", value);
+  }
+
+
+
+
+
+
+
+  Future<void> saveData(String key, value) async {
+    final SharedPreferences prefs = await SharedPreferences.getInstance();
+
+    if (value is String) {
+      prefs.setString(key, value);
+    } else if (value is bool) {
+      prefs.setBool('my_bool', value);
+    }
+  }
+
+
+
+
+  Future loadData(String key, String valuetype) async {
+    final SharedPreferences prefs = await SharedPreferences.getInstance();
+    var r;
+
+    if (valuetype == "String") {
+      r =prefs.getString('key') ?? '';
+    } else if (valuetype == "bool") {
+      r = prefs.getBool('key') ?? false;
+    }
+
+    return r;
+  }
+
+
+
+
+
 
 
 
@@ -123,26 +159,28 @@ class InDrawerWidgetState extends State<InDrawerWidget> {
 
   Future<void> readConnSet() async {
 
-    Future<File> getFilePath(name) async {
-      final directory = await getTemporaryDirectory();
-      return File("${directory.path}/$name");
-    }
+    // Future<File> getFilePath(name) async {
+    //   final directory = await getTemporaryDirectory();
+    //   return File("${directory.path}/$name");
+    // }
 
-    Future<String> load(name) async {
-      final file = await getFilePath(name);
-      return file.readAsString();
-    }
+    // Future<String> load(name) async {
+    //   final file = await getFilePath(name);
+    //   return file.readAsString();
+    // }
 
-    String value = "false";
+    bool value = false;
     try {
-      value = await load("conn_setting.txt");
+      final p = await SharedPreferences.getInstance();
+      value = p.getBool("isWebsocket") ?? false;
+      // value = await load("conn_setting.txt");
     } catch (e) {
       debugPrint("$e");
     }
 
-    bool b = value.toLowerCase() == 'true';
+    // bool b = value.toLowerCase() == 'true';
     setState(() {
-      _isWebsocket = b;
+      _isWebsocket = value;
     });
   }
 
@@ -216,7 +254,7 @@ class InDrawerWidgetState extends State<InDrawerWidget> {
                             debugPrint("allow=============================================");
 
                             try {
-                              wSwitch(iptxconn.text, "rvc_setting.txt");
+                              setIP(iptxconn.text);
                             } catch (e) {
                               debugPrint("$e");
                             }
@@ -280,7 +318,7 @@ class InDrawerWidgetState extends State<InDrawerWidget> {
                         debugPrint("allow=============================================");
 
                         try {
-                          wSwitch(iptxconn.text, "rvc_setting.txt");
+                          setIP(iptxconn.text);
                         } catch (e) {
                           debugPrint("$e");
                         }
@@ -428,7 +466,7 @@ class InDrawerWidgetState extends State<InDrawerWidget> {
                 _isWebsocket = value;
 
                 try {
-                  wSwitch("$value", "conn_setting.txt");
+                  setConnectPtcl(value);
                 } catch (e) {
                   debugPrint("$e");
                 }

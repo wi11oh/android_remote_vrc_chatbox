@@ -49,7 +49,7 @@ def message_received(client_, server, message:str):
 
         win32clipboard.OpenClipboard()
         win32clipboard.EmptyClipboard()
-        win32clipboard.SetClipboardText(message)
+        win32clipboard.SetClipboardText(message.encode('mbcs', 'ignore').decode('mbcs'))
         win32clipboard.CloseClipboard()
 
         # ctypes.windll.user32.keybd_event(win32con.VK_CONTROL, 0, 0, 0)
