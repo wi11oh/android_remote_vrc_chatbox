@@ -1,11 +1,12 @@
+import 'dart:async';
+import 'dart:io';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:remote_vrc_chatbox/thirdparty_nts.dart';
 import 'package:url_launcher/url_launcher.dart';
-import 'dart:async';
-import 'dart:io';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -93,17 +94,6 @@ class InDrawerWidgetState extends State<InDrawerWidget> {
 
   Future<void> setIP(String value) async {
 
-    // Future<File> getFilePath() async {
-    //   final directory = await getTemporaryDirectory();
-    //   return File("${directory.path}/$name");
-    // }
-
-    // void write() async {
-    //   getFilePath().then((File file) {
-    //     file.writeAsString(tf);
-    //   });
-    // }
-
     final p = await SharedPreferences.getInstance();
     p.setString("ip", value);
 
@@ -120,65 +110,16 @@ class InDrawerWidgetState extends State<InDrawerWidget> {
 
 
 
-
-  Future<void> saveData(String key, value) async {
-    final SharedPreferences prefs = await SharedPreferences.getInstance();
-
-    if (value is String) {
-      prefs.setString(key, value);
-    } else if (value is bool) {
-      prefs.setBool('my_bool', value);
-    }
-  }
-
-
-
-
-  Future loadData(String key, String valuetype) async {
-    final SharedPreferences prefs = await SharedPreferences.getInstance();
-    var r;
-
-    if (valuetype == "String") {
-      r =prefs.getString('key') ?? '';
-    } else if (valuetype == "bool") {
-      r = prefs.getBool('key') ?? false;
-    }
-
-    return r;
-  }
-
-
-
-
-
-
-
-
-
-
-
   Future<void> readConnSet() async {
-
-    // Future<File> getFilePath(name) async {
-    //   final directory = await getTemporaryDirectory();
-    //   return File("${directory.path}/$name");
-    // }
-
-    // Future<String> load(name) async {
-    //   final file = await getFilePath(name);
-    //   return file.readAsString();
-    // }
 
     bool value = false;
     try {
       final p = await SharedPreferences.getInstance();
       value = p.getBool("isWebsocket") ?? false;
-      // value = await load("conn_setting.txt");
     } catch (e) {
       debugPrint("$e");
     }
 
-    // bool b = value.toLowerCase() == 'true';
     setState(() {
       _isWebsocket = value;
     });

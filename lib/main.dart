@@ -71,8 +71,6 @@ class MyFormState extends State<MyForm> {
   SpeechToText speechToText = SpeechToText();
   bool isListenning = false;
 
-  // late OSCSocket _server;
-
 
 
 
@@ -84,7 +82,6 @@ class MyFormState extends State<MyForm> {
     super.initState();
     readConnSet();
     connectToWebSocket();
-    // setOSCServer();
 
     _intentDataStreamSubscription = ReceiveSharingIntent.getTextStream().listen((String value) {
       setState(() {
@@ -114,7 +111,6 @@ class MyFormState extends State<MyForm> {
     _streamSubscription.cancel();
     _intentDataStreamSubscription.cancel();
     _channel.sink.close();
-    // _server.close();
     super.dispose();
   }
 
@@ -164,7 +160,6 @@ class MyFormState extends State<MyForm> {
     try {
       final p = await SharedPreferences.getInstance();
       value = p.getString("ip") ?? "192.168.0.10";
-      // value = await load("rvc_setting.txt");
     } catch (e) {
       debugPrint("$e");
     }
@@ -185,8 +180,6 @@ class MyFormState extends State<MyForm> {
 
 
   Future<void> reconnectWebsocket() async {
-    // await Future.delayed(const Duration(milliseconds: 500));
-    // _streamSubscription.cancel();
     if (_isWebsocket) {
       _channel.sink.close();
       await Future.delayed(const Duration(seconds: 5), () {});
@@ -218,12 +211,10 @@ class MyFormState extends State<MyForm> {
     try {
       final p = await SharedPreferences.getInstance();
       value = p.getBool("isWebsocket") ?? false;
-      // value = await load("conn_setting.txt");
     } catch (e) {
       debugPrint("$e");
     }
 
-    // bool b = value.toLowerCase() == 'true';
     setState(() {
       _isWebsocket = value;
     });
@@ -527,7 +518,6 @@ class MyFormState extends State<MyForm> {
                         color: const Color.fromARGB(255, 19, 19, 19),
                         width: 2,
                       ),
-                      // color: Colors.amber
                     ),
                     width: 40,
                     height: 40,
@@ -545,7 +535,6 @@ class MyFormState extends State<MyForm> {
                     width: MediaQuery.of(context).size.width * 0.7,
                     height: 40,
                     child: TextFormField(
-                      // onFieldSubmitted: submit,
                       onEditingComplete: () {
                         submit(txc.text);
                       },
