@@ -48,6 +48,12 @@ youtubeやブラウザで選択した文字を共有すると自動で起動し�
 
 <img src="./readme_images/6.png" width="250px"> <img src="./readme_images/7.png" width="250px"> <img src="./readme_images/8.png" width="250px">
 
+### - 日英翻訳
+
+tweet参照
+
+<blockquote class="twitter-tweet"><p lang="ja" dir="ltr"> <a href="https://t.co/iuBZ1WIBqo">pic.twitter.com/iuBZ1WIBqo</a></p>&mdash; うぃろー (@UirouMachineVRC) <a href="https://twitter.com/UirouMachineVRC/status/1727670131386659306?ref_src=twsrc%5Etfw">November 23, 2023</a></blockquote> <script async src="https://platform.twitter.com/widgets.js" charset="utf-8"></script>
+
 ### - クリップボード送信
 
 windows側で rVRCc_server を動かしていて、且つ通信方式を 【websocketモード】 にしている時限定で利用できる機能です。 【OSCモード】 ではボタンがホワイトアウトしています。
