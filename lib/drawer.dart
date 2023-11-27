@@ -56,7 +56,6 @@ class InDrawerWidgetState extends State<InDrawerWidget> {
     try {
       final p = await SharedPreferences.getInstance();
       value = p.getString("ip") ?? "ERROR";
-      // value = await load("rvc_setting.txt");
     } catch (e) {
       debugPrint("$e");
     }
@@ -388,14 +387,11 @@ class InDrawerWidgetState extends State<InDrawerWidget> {
             trackColor: MaterialStateColor.resolveWith(
               (Set<MaterialState> states) {
                 if (states.contains(MaterialState.selected)) {
-                  // Selected state color
                   return const Color.fromARGB(255, 19, 19, 19);
                 }
                 if (states.contains(MaterialState.disabled)) {
-                  // Disabled state color
                   return const Color.fromARGB(255, 19, 19, 19);
                 }
-                // Default color
                 return const Color.fromARGB(255, 19, 19, 19);
               },
             ),

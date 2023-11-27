@@ -212,6 +212,14 @@ https://fontawesome.com/license/free
 
 https://creativecommons.org/licenses/by/4.0/
             '''),
+            const LicenseEntryWithLineBreaks(<String>["みんなの自動翻訳＠TexTra®"], '''
+「みんなの自動翻訳＠TexTra®」（以下「当サイト」という。）は、情報通信研究機構（以下「当機構」という。）が運営する自動翻訳エンジンサービスサイトです。
+当サイトが提供するサイト上のサービス及びAPI（以下、これらを併せて「本サービス」という。）を利用しようとする開発会社及び個人
+（以下、これらを併せて「開発会社等」という。）は、以下に規定する利用規約（以下「本規約」という。）の全ての記載内容について同意したものとみなされます。
+当機構が本サービスの利用のために直接または間接に公開しているツールには、本サービスを利用するかどうかにかかわらず、後掲のMITライセンスが適用されます。
+
+MITライセンス（https://opensource.org/license/mit/）
+            '''),
         ]);
     });
 
@@ -237,7 +245,7 @@ https://creativecommons.org/licenses/by/4.0/
         // body: CustomLicensePage(),
         body: LicensePage(
           applicationName: "remote vrc chatbox",
-          applicationVersion: "v0.0.3",
+          applicationVersion: "v0.0.5",
           applicationIcon: Container(
             margin: const EdgeInsets.all(20),
             child: ClipRRect(

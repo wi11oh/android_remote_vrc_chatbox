@@ -11,7 +11,6 @@ import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:remote_vrc_chatbox/env.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:web_socket_channel/web_socket_channel.dart';
-import 'package:path_provider/path_provider.dart';
 import 'package:http/http.dart' as http;
 import 'package:receive_sharing_intent/receive_sharing_intent.dart';
 import 'package:osc/osc.dart';
@@ -137,22 +136,6 @@ class MyFormState extends State<MyForm> {
   //     txc.text = msg.toString();
   //   });
   // }
-
-
-
-
-  Future<File> getFilePath(name) async {
-    final directory = await getTemporaryDirectory();
-    return File("${directory.path}/$name");
-  }
-
-
-
-
-  Future<String> load(name) async {
-    final file = await getFilePath(name);
-    return file.readAsString();
-  }
 
 
 
@@ -428,83 +411,83 @@ class MyFormState extends State<MyForm> {
         child: Stack(
           clipBehavior: Clip.none,
           children: [
-            // Positioned(
-            //   top: -50,
-            //   left: ((MediaQuery.of(context).size.width)-(MediaQuery.of(context).size.width * 0.9))/2,
-            //   child: Container(
-            //     width: MediaQuery.of(context).size.width * 0.9,
-            //     height: 40,
-            //     padding: const EdgeInsets.fromLTRB(10, 0, 10, 0),
-            //     decoration: BoxDecoration(
-            //       borderRadius:BorderRadius.circular(20),
-            //       color: const Color.fromARGB(255, 19, 19, 19),
-            //     ),
-            //     child: Row(
-            //       mainAxisAlignment: MainAxisAlignment.spaceAround,
-            //       crossAxisAlignment: CrossAxisAlignment.center,
-            //       children: [
-            //         TextButton.icon(
-            //           style: const ButtonStyle(
-            //             padding: MaterialStatePropertyAll(EdgeInsets.fromLTRB(2, 0, 2, 0)),
-            //           ),
-            //           onPressed: ()  {
-            //             debugPrint("clip");
-            //             // final data = ClipboardData(text: txc.text);
-            //             // await Clipboard.setData(data);
-            //           },
-            //           icon: const FaIcon(
-            //             FontAwesomeIcons.solidCopy,
-            //             size: 15,
-            //             color: Colors.white,
-            //           ),
-            //           label: const Text(
-            //             "コピー",
-            //             style: TextStyle(
-            //               fontSize: 15,
-            //               color: Colors.white
-            //             ),
-            //           ),
-            //         ),
-            //         TextButton.icon(
-            //           style: const ButtonStyle(
-            //             padding: MaterialStatePropertyAll(EdgeInsets.fromLTRB(2, 0, 2, 0)),
-            //           ),
-            //           onPressed: () {},
-            //           icon: const FaIcon(
-            //             FontAwesomeIcons.solidClipboard,
-            //             size: 15,
-            //             color: Colors.white,
-            //           ),
-            //           label: const Text(
-            //             "貼り付け",
-            //             style: TextStyle(
-            //               fontSize: 15,
-            //               color: Colors.white
-            //             ),
-            //           ),
-            //         ),
-            //         TextButton.icon(
-            //           style: const ButtonStyle(
-            //             padding: MaterialStatePropertyAll(EdgeInsets.fromLTRB(2, 0, 2, 0)),
-            //           ),
-            //           onPressed: () {},
-            //           icon: const FaIcon(
-            //             FontAwesomeIcons.language,
-            //             size: 15,
-            //             color: Colors.white,
-            //           ),
-            //           label: const Text(
-            //             "翻訳",
-            //             style: TextStyle(
-            //               fontSize: 15,
-            //               color: Colors.white
-            //             ),
-            //           ),
-            //         ),
-            //       ],
-            //     ),
-            //   ),
-            // ),
+            Positioned(
+              top: -50,
+              left: ((MediaQuery.of(context).size.width)-(MediaQuery.of(context).size.width * 0.9))/2,
+              child: Container(
+                width: MediaQuery.of(context).size.width * 0.9,
+                height: 40,
+                padding: const EdgeInsets.fromLTRB(10, 0, 10, 0),
+                decoration: BoxDecoration(
+                  borderRadius:BorderRadius.circular(20),
+                  color: const Color.fromARGB(255, 19, 19, 19),
+                ),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceAround,
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  children: [
+                    TextButton.icon(
+                      style: const ButtonStyle(
+                        padding: MaterialStatePropertyAll(EdgeInsets.fromLTRB(2, 0, 2, 0)),
+                      ),
+                      onPressed: ()  {
+                        debugPrint("clip");
+                        // final data = ClipboardData(text: txc.text);
+                        // await Clipboard.setData(data);
+                      },
+                      icon: const FaIcon(
+                        FontAwesomeIcons.solidCopy,
+                        size: 15,
+                        color: Colors.white,
+                      ),
+                      label: const Text(
+                        "コピー",
+                        style: TextStyle(
+                          fontSize: 15,
+                          color: Colors.white
+                        ),
+                      ),
+                    ),
+                    TextButton.icon(
+                      style: const ButtonStyle(
+                        padding: MaterialStatePropertyAll(EdgeInsets.fromLTRB(2, 0, 2, 0)),
+                      ),
+                      onPressed: () {},
+                      icon: const FaIcon(
+                        FontAwesomeIcons.solidClipboard,
+                        size: 15,
+                        color: Colors.white,
+                      ),
+                      label: const Text(
+                        "貼り付け",
+                        style: TextStyle(
+                          fontSize: 15,
+                          color: Colors.white
+                        ),
+                      ),
+                    ),
+                    TextButton.icon(
+                      style: const ButtonStyle(
+                        padding: MaterialStatePropertyAll(EdgeInsets.fromLTRB(2, 0, 2, 0)),
+                      ),
+                      onPressed: () {},
+                      icon: const FaIcon(
+                        FontAwesomeIcons.language,
+                        size: 15,
+                        color: Colors.white,
+                      ),
+                      label: const Text(
+                        "翻訳",
+                        style: TextStyle(
+                          fontSize: 15,
+                          color: Colors.white
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ),
             BottomAppBar(
               padding: const EdgeInsets.fromLTRB(0, 10, 0, 10),
               elevation: 0.0,
