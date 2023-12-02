@@ -50,9 +50,9 @@ youtubeやブラウザで選択した文字を共有すると自動で起動し�
 
 ### - 日英翻訳
 
-tweet参照
+gif参照
 
-<blockquote class="twitter-tweet" data-conversation="none"><a href="https://twitter.com/UirouMachineVRC/status/1727670131386659306"></a></blockquote>
+![gif](./readme_images/translation.gif)
 
 ### - クリップボード送信
 
