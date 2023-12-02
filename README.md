@@ -52,7 +52,7 @@ youtubeやブラウザで選択した文字を共有すると自動で起動し�
 
 tweet参照
 
-<blockquote class="twitter-tweet"><p lang="ja" dir="ltr"> <a href="https://t.co/iuBZ1WIBqo">pic.twitter.com/iuBZ1WIBqo</a></p>&mdash; うぃろー (@UirouMachineVRC) <a href="https://twitter.com/UirouMachineVRC/status/1727670131386659306?ref_src=twsrc%5Etfw">November 23, 2023</a></blockquote> <script async src="https://platform.twitter.com/widgets.js" charset="utf-8"></script>
+<blockquote class="twitter-tweet" data-conversation="none"><a href="https://twitter.com/UirouMachineVRC/status/1727670131386659306"></a></blockquote>
 
 ### - クリップボード送信
 
