@@ -93,7 +93,7 @@ windows側で rVRCc_server を動かしていて、且つ通信方式を 【adva
 
 - 設定場所はドロワー最上部、IP設定をタップし、[IPアドレス](http://wi11oh.com/other/remote_vrc_chatbox_tips)を入力
 
-<img src="./readme_images/9.png" width="250px"> <img src="./readme_images/16.png" width="250px"> <img src="./readme_images/15.png" width="250px">
+<img src="./readme_images/9_.png" width="250px"> <img src="./readme_images/16.png" width="250px"> <img src="./readme_images/15.png" width="250px">
 
 ## TODO(今後予定)
 
