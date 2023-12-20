@@ -44,7 +44,16 @@ app.*.map.json
 /android/app/profile
 /android/app/release
 
+# User Later additions.
 !*.gitignore
+
 *.env
 env.g.dart
+
 /assets/sounds
+/assets/fonts
+
+/rVRCc_server/env
+/rVRCc_server/test.py
+/rVRCc_server/build
+/rVRCc_server/*.spec

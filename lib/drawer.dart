@@ -353,7 +353,7 @@ class InDrawerWidgetState extends State<InDrawerWidget> {
                   "made by うぃろー / willoh",
                   style: TextStyle(
                     fontFamily: "Din",
-                    fontSize: 10,
+                    fontSize: 8,
                     color: Color.fromARGB(255, 128, 128, 128)
                   )
                 ),
@@ -383,7 +383,7 @@ class InDrawerWidgetState extends State<InDrawerWidget> {
                 color: Color.fromARGB(255, 19, 19, 19),
               ),
             ),
-            subtitle: const Text("OSC <--> Websocket"),
+            subtitle: const Text("nomal <--> advanced"),
             trackColor: MaterialStateColor.resolveWith(
               (Set<MaterialState> states) {
                 if (states.contains(MaterialState.selected)) {
@@ -399,9 +399,10 @@ class InDrawerWidgetState extends State<InDrawerWidget> {
             value: _isWebsocket,
             onChanged: (bool value) {
               setState(() {
-
                 _isWebsocket = value;
+              });
 
+              setState(() {
                 try {
                   setConnectPtcl(value);
                 } catch (e) {
@@ -412,9 +413,22 @@ class InDrawerWidgetState extends State<InDrawerWidget> {
 
                 if (! _isWebsocket) {
                   widget.disconnectWebsocket();
+                } else if (_isWebsocket) {
+                  Fluttertoast.showToast(
+                    msg: "接続中… 5秒以上要します🍵",
+                    gravity: ToastGravity.BOTTOM,
+                    toastLength: Toast.LENGTH_LONG,
+                    backgroundColor: const Color.fromARGB(255, 19, 19, 19),
+                    textColor: Colors.white,
+                    fontSize: 20
+                  );
+                  widget.reconnectWebsocketCallback();
+                } else {
+                  debugPrint("nandaka yousuga okashiinaa");
                 }
-
               });
+
+
             },
           ),
           ListTile(

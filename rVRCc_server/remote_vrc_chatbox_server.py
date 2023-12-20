@@ -1,10 +1,11 @@
-import datetime, argparse, socket, base64, threading, io, ctypes, time
+import datetime, argparse, socket, base64, threading, io, ctypes, time, json
 
 from pythonosc import udp_client
 import win32clipboard
 from websocket_server import WebsocketServer
 from pystray import Icon, Menu, MenuItem
 from PIL import Image
+
 
 
 
@@ -32,50 +33,50 @@ def client_left(client, server):
     print(f"┃ QUIT>>  ID:{id} IP:{address}")
 
 # 受信
-def message_received(client_, server, message:str):
-    flag = True
-
-    if (prefix:="[remote_vrc_chatbox_action:paste]") in message:
-        flag = False
-        message = message.removeprefix(prefix)
-        # pythoncom.CoInitialize()
-        # shell = win32com.client.Dispatch("WScript.Shell")
-        # shell.SendKeys('%')
-        # win32gui.SetForegroundWindow(win32gui.FindWindow(None, "VRChat"))
-        # pythoncom.CoUninitialize()
-        # win32clipboard.OpenClipboard()
-        # prev_pb = win32clipboard.GetClipboardData()
-        # win32clipboard.CloseClipboard()
-
-        win32clipboard.OpenClipboard()
-        win32clipboard.EmptyClipboard()
-        win32clipboard.SetClipboardText(message.encode('mbcs', 'ignore').decode('mbcs'))
-        win32clipboard.CloseClipboard()
-
-        # ctypes.windll.user32.keybd_event(win32con.VK_CONTROL, 0, 0, 0)
-        # ctypes.windll.user32.keybd_event(ord('V'), 0, 0, 0)
-        # ctypes.windll.user32.keybd_event(ord('V'), 0, win32con.KEYEVENTF_KEYUP, 0)
-        # ctypes.windll.user32.keybd_event(win32con.VK_CONTROL, 0, win32con.KEYEVENTF_KEYUP, 0)
-
-        # time.sleep(1)
-
-        # win32clipboard.OpenClipboard()
-        # win32clipboard.EmptyClipboard()
-        # win32clipboard.SetClipboardText(prev_pb)
-        # win32clipboard.CloseClipboard()
-
+def message_received(client_, server, message):
+    payload_json = json.loads(message)
+    mode = payload_json["mode"]
+    text = payload_json["textmsg"]
     nowtime = datetime.datetime.now().time().replace(microsecond=0)
     id = client_["id"]
-    print(f"┃ MESSAGE_{id}_{nowtime}>>  {message}  ")
-    SENDTEXT = (message, True)
-    if flag:
+
+    if mode == "nomal":
+        print(f"┃ MESSAGE_{id}_{nowtime}>>  {text}  ")
+        SENDTEXT = (text, True)
         client.send_message("/chatbox/input", SENDTEXT)
+    elif mode == "paste":
+        win32clipboard.OpenClipboard()
+        win32clipboard.EmptyClipboard()
+        win32clipboard.SetClipboardText(text.encode('mbcs', 'ignore').decode('mbcs'))
+        win32clipboard.CloseClipboard()
+        print(f"┃ PASTE_{id}_{nowtime}>>  {text}  ")
+    elif mode == "copy":
+        win32clipboard.OpenClipboard()
+        try:
+            clip = win32clipboard.GetClipboardData()
+            win32clipboard.CloseClipboard()
+            clip = str(clip)
+            clip = clip.replace("\r\n", " ")
+            clip = clip.replace("\n", " ")
+            if clip != "":
+                payload = {"clip": clip}
+                server.send_message_to_all(json.dumps(payload, ensure_ascii=False))
+                print(f"┃ COPY_{id}_{nowtime}>>  {clip}  ")
+        except:
+            win32clipboard.CloseClipboard()
+            print(f"┃ COPY_{id}_{nowtime}>>  fail ")
+    else:
+        print(f"┃ UNKNOWN_{id}_{nowtime}>>  WHAT?? ")
+
+
+
 
 server = WebsocketServer(port=41129, host=socket.gethostbyname(socket.gethostname()))
-
 server.set_fn_new_client(new_client)
 server.set_fn_client_left(client_left)
 server.set_fn_message_received(message_received)
+
+
 
 
 

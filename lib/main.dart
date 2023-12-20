@@ -4,6 +4,7 @@ import 'package:intl/intl.dart';
 import 'dart:async';
 import 'dart:convert';
 import 'dart:io';
+import 'dart:ui';
 
 import 'package:remote_vrc_chatbox/drawer.dart';
 
@@ -67,9 +68,11 @@ class MyFormState extends State<MyForm> {
   String? _sharedText;
   TextEditingController txc = TextEditingController();
   ScrollController scc = ScrollController();
+  GlobalKey listviewKey = GlobalKey();
 
   List<String> items = [];
   List<String> times = [];
+  List<String> modes = [];
 
   SpeechToText speechToText = SpeechToText();
   bool isListenning = false;
@@ -120,26 +123,6 @@ class MyFormState extends State<MyForm> {
 
 
 
-  // void setOSCServer() async {
-
-  //   for (var interface in await  NetworkInterface.list()) {
-  //     print('== Interface: ${interface.name} ==');
-  //     for (var addr in interface.addresses) {
-  //       print(
-  //           '!!!!!!!!!!!!!!!!!!!!!!${addr.address} ${addr.host} ${addr.isLoopback} ${addr.rawAddress} ${addr.type.name}');
-  //     }
-  //   }
-
-  //   _server = OSCSocket(serverPort: 41129);
-  //   _server.listen((msg) {
-  //     print("==================================================================================${msg.toString()}");
-  //     txc.text = msg.toString();
-  //   });
-  // }
-
-
-
-
   Future<void> connectToWebSocket() async {
 
     String value = "192.168.0.10";
@@ -156,10 +139,23 @@ class MyFormState extends State<MyForm> {
 
     debugPrint("connect  $value");
     _channel = WebSocketChannel.connect(Uri.parse("ws://$value:41129"));
-    _streamSubscription = _channel.stream.listen(
-      (message) {
-      },
-    );
+    _streamSubscription = _channel.stream.listen((message) {
+      String historyViewMode = "copy (PC→mobile)";
+
+      final streamMap = jsonDecode(message) as Map<String, dynamic>;
+
+      setState(() {
+        _addItem(streamMap["clip"], historyViewMode);
+        debugPrint("clip : ${streamMap["clip"]}");
+        Clipboard.setData(ClipboardData(text: streamMap["clip"]));
+        txc.clear();
+        scc.animateTo(
+          scc.position.maxScrollExtent + 87,
+          duration: const Duration(seconds: 1),
+          curve: Curves.fastLinearToSlowEaseIn
+        );
+      });
+    });
 
   }
 
@@ -167,11 +163,9 @@ class MyFormState extends State<MyForm> {
 
 
   Future<void> reconnectWebsocket() async {
-    if (_isWebsocket) {
-      _channel.sink.close();
-      await Future.delayed(const Duration(seconds: 5), () {});
-      connectToWebSocket();
-    }
+    _channel.sink.close();
+    await Future.delayed(const Duration(seconds: 5), () {});
+    connectToWebSocket();
   }
 
 
@@ -186,7 +180,11 @@ class MyFormState extends State<MyForm> {
 
 
   void websocket(text) {
-    _channel.sink.add(text);
+    try {
+      _channel.sink.add(text);
+    } catch (e) {
+      debugPrint("$e");
+    }
   }
 
 
@@ -211,74 +209,85 @@ class MyFormState extends State<MyForm> {
 
 
 
-  void _addItem(text) {
+  void _addItem(String text,String mode) {
     setState(() {
       items.add(text);
       times.add(DateFormat('yyyy/MM/dd HH:mm:ss').format(DateTime.now()));
+      modes.add(mode);
     });
   }
 
 
 
 
-  send (text) {
+  // bool checkListviewOverflow() {
+  //   final RenderBox listviewRB = listviewKey.currentContext!.findRenderObject() as RenderBox;
+  //   final lvHeight = listviewRB.size.height;
+  //   final lvContentHeight = listviewRB.paintBounds.size.height;
+  //   return lvContentHeight >= lvHeight;
+  // }
 
-    if (text != "") {
+
+
+
+  void addViewAndAnim(String text, String historyViewMode) {
+    _addItem(text, historyViewMode);
+    txc.clear();
+    scc.animateTo(
+      scc.position.maxScrollExtent + 87,
+      duration: const Duration(seconds: 1),
+      curve: Curves.fastLinearToSlowEaseIn
+    );
+  }
+
+
+
+
+  send (Map payload) {
+    final payloadjson = jsonEncode(payload);
+    String historyViewMode = "unknown";
+    if (payload["mode"] == "nomal" && payload["textmsg"] != "") {
       if (_isWebsocket) {
-        if (text.replaceAll("[remote_vrc_chatbox_action:paste]", "") == "") {
-        } else {
-          websocket(text);
-          debugPrint(text);
-          text = text.replaceAll("[remote_vrc_chatbox_action:paste]", "");
-          _addItem(text);
-          txc.clear();
-          debugPrint("$items");
-          scc.animateTo(
-          scc.position.maxScrollExtent + 90,
-          duration: const Duration(seconds: 1),
-          curve: Curves.fastLinearToSlowEaseIn
-          );
-        }
+        historyViewMode = "text (advanced/WS)";
+        websocket(payloadjson);
       } else {
-        text = text.replaceAll("[remote_vrc_chatbox_action:paste]", "");
-
-        final message = OSCMessage("/chatbox/input", arguments: [text, true]);
+        historyViewMode = "text (nomal/OSC)";
+        final message = OSCMessage("/chatbox/input", arguments: [payload["textmsg"], true]);
         const port = 9000;
-
         RawDatagramSocket.bind(InternetAddress.anyIPv4, 0)
         .then((socket) => socket.send(message.toBytes(), InternetAddress(_ipAddr), port))
         .catchError((e) {
           debugPrint('Error: $e');
           return -1;
         });
-        _addItem(text);
-        txc.clear();
-        scc.animateTo(
-        scc.position.maxScrollExtent + 90,
-        duration: const Duration(seconds: 1),
-        curve: Curves.fastLinearToSlowEaseIn
-        );
       }
+      addViewAndAnim(payload["textmsg"], historyViewMode);
+    } else if (payload["mode"] == "paste" && payload["textmsg"] != "" && _isWebsocket) {
+      historyViewMode = "paste (mobile→PC)";
+      websocket(payloadjson);
+      addViewAndAnim(payload["textmsg"], historyViewMode);
+    } else if (payload["mode"] == "copy" && payload["textmsg"] == "" && _isWebsocket) {
+      historyViewMode = "copy (PC→mobile)";
+      websocket(payloadjson);
+    } else {
+      debugPrint("empty");
     }
-
+  }
+  void submit (Map payload) {
+    send(payload);
+  }
+  void submit2 () {
+    Map<String, String> payload = {
+      "mode": "nomal",
+      "textmsg": txc.text
+    };
+    send(payload);
   }
 
 
 
 
-  submit (String text_) {
-    String text = text_;
-    send(text);
-  }
-  submit2 () {
-    String text = txc.text;
-    send(text);
-  }
-
-
-
-
-  pressedit(i) {
+  void pressedit(i) {
     txc.text = items[i];
   }
 
@@ -299,19 +308,28 @@ class MyFormState extends State<MyForm> {
 
 
     return Scaffold(
+      extendBodyBehindAppBar: true,
       resizeToAvoidBottomInset: true,
       appBar: AppBar(
+        flexibleSpace: ClipRect(
+          child: BackdropFilter(
+            filter: ImageFilter.blur(
+              sigmaX: 5,
+              sigmaY: 5
+            ),
+            child: Container(color: Colors.transparent,),),
+        ),
         iconTheme: const IconThemeData(
-          color: Color.fromARGB(255, 19, 19, 19)
+          color: Color.fromARGB(200, 19, 19, 19)
         ),
         centerTitle: true,
-        shape: const Border(
-          bottom: BorderSide(
-            color: Color.fromARGB(255, 19, 19, 19),
-            width: 2
-          )
-        ),
-        backgroundColor: Colors.white,
+        // shape: const Border(
+        //   bottom: BorderSide(
+        //     color: Color.fromARGB(255, 19, 19, 19),
+        //     width: 2
+        //   )
+        // ),
+        backgroundColor: const Color.fromARGB(200, 255, 255, 255),
         elevation: 0.0,
         title: const Text(
           "remote vrc-chatbox",
@@ -331,6 +349,7 @@ class MyFormState extends State<MyForm> {
         children: <Widget>[
           Expanded(
             child: ListView.builder(
+              key: listviewKey,
               controller: scc,
               itemCount: items.length,
               itemBuilder: (context, index) {
@@ -356,12 +375,25 @@ class MyFormState extends State<MyForm> {
                             mainAxisAlignment: MainAxisAlignment.spaceBetween,
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
-                              Text(
-                                times[index],
-                                style: const TextStyle(
-                                  fontSize: 12,
-                                  fontFamily: "Din"
-                                ),
+                              Row(
+                                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                                crossAxisAlignment: CrossAxisAlignment.center,
+                                children: [
+                                  Text(
+                                    times[index],
+                                    style: const TextStyle(
+                                      fontSize: 11,
+                                      fontFamily: "Din"
+                                    ),
+                                  ),
+                                  Text(
+                                    " / ${modes[index]}",
+                                    style: const TextStyle(
+                                      fontSize: 11,
+                                      fontFamily: "Din"
+                                    ),
+                                  ),
+                                ],
                               ),
                               SizedBox(
                                 width: MediaQuery.of(context).size.width - 122,
@@ -492,6 +524,7 @@ class MyFormState extends State<MyForm> {
               padding: const EdgeInsets.fromLTRB(0, 10, 0, 10),
               elevation: 0.0,
               height: 60 + MediaQuery.of(context).viewInsets.bottom,
+              color: Colors.white,
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.start,
                 children: [
@@ -537,9 +570,12 @@ class MyFormState extends State<MyForm> {
                                 });
                                 speechToText.stop();
                                 Future.delayed(const Duration(seconds: 1), () {
-                                    submit(txc.text);
-                                  }
-                                );
+                                  Map<String, String> payload = {
+                                    "mode": "nomal",
+                                    "textmsg": txc.text
+                                  };
+                                  submit(payload);
+                                });
                               },
                               child: const Icon(
                                 FontAwesomeIcons.microphone,
@@ -590,7 +626,19 @@ class MyFormState extends State<MyForm> {
                         height: 40,
                         child: IconButton(
                           onPressed: (!(_isWebsocket)) ? null : () {
-                            submit("[remote_vrc_chatbox_action:paste]${txc.text}");
+                            if (txc.text == "") {
+                              Map<String, String> payload = {
+                                "mode": "copy",
+                                "textmsg": ""
+                              };
+                              submit(payload);
+                            } else {
+                              Map<String, String> payload = {
+                                "mode": "paste",
+                                "textmsg": txc.text
+                              };
+                              submit(payload);
+                            }
                           },
                           padding: EdgeInsets.zero,
                           iconSize: 20,
@@ -603,7 +651,11 @@ class MyFormState extends State<MyForm> {
                         height: 40,
                         child: TextFormField(
                           onEditingComplete: () {
-                            submit(txc.text);
+                            Map<String, String> payload = {
+                              "mode": "nomal",
+                              "textmsg": txc.text
+                            };
+                            submit(payload);
                           },
                           style: const TextStyle(
                             fontSize: 20,
@@ -679,6 +731,7 @@ class MyFormState extends State<MyForm> {
                                       textColor: Colors.white,
                                       fontSize: 20
                                     );
+                                    txc.text = "";
                                     return;
                                   }
 

@@ -245,7 +245,7 @@ MITライセンス（https://opensource.org/license/mit/）
         // body: CustomLicensePage(),
         body: LicensePage(
           applicationName: "remote vrc chatbox",
-          applicationVersion: "v0.0.5",
+          applicationVersion: "v0.0.6",
           applicationIcon: Container(
             margin: const EdgeInsets.all(20),
             child: ClipRRect(
