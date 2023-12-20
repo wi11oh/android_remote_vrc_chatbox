@@ -10,9 +10,9 @@ flutterってクロスプラットフォームやろ！！と思ったあなた�
 
 ## windows側にも何かインストールする感じ？
 
-***入れなくても動きます！！！*** スマホにアプリインストールして文字打つだけ！　【OSCモード】
+***入れなくても動きます！！！*** スマホにアプリインストールして文字打つだけ！　【nomalモード】
 
-でも一緒に配布してる rVRCc server ってやつをwindowsに入れるてるとクリップボード共有ができてスマホからiwasyncとかにURL貼り付けれるので便利！！！ 　【websocketモード】
+でも一緒に配布してる rVRCc server ってやつをwindowsに入れるてるとクリップボード共有ができてスマホからiwasyncとかにURL貼り付けれるので便利！！！ 　【advansedモード】
 
 ## 事前準備
 
@@ -56,15 +56,26 @@ gif参照
 
 ### - クリップボード送信
 
-windows側で rVRCc_server を動かしていて、且つ通信方式を 【websocketモード】 にしている時限定で利用できる機能です。 【OSCモード】 ではボタンがホワイトアウトしています。
+windows側で rVRCc_server を動かしていて、且つ通信方式を 【advancedモード】 にしている時限定で利用できる機能です。 【nomalモード】 ではボタンがホワイトアウトしています。
 
 - モード切り替えはドロワーにあります
 
 <img src="./readme_images/9.png" width="250px">
 
+### スマホ → PC
+
 - VRChatが 入力欄にURL等文字列を入力しクリップボードボタンを押すと、PC側でのクリップボードが更新され、貼り付けボタンで入力できます。
+- iwasyncなどのプレイヤーにURLを貼ったり、ワールド検索などに使えます。
+
 
 <img src="./readme_images/10.png" width="250px"> <img src="./readme_images/11.jpg" width="250px"> <img src="./readme_images/12.jpg" width="250px">
+
+### PC → スマホ
+
+<img src="./readme_images/17.jpg" width="250px"> <img src="./readme_images/18.png" width="250px"> <img src="./readme_images/19.png" width="250px">
+
+- 文字入力欄に何も入力していないとPC側のクリップボードを読み取り、スマホ側のクリップボードに挿入されます。
+- TONなどの復活の呪文形式のセーブ機能があるワールドの呪文をスマホに素早く保存できます
 
 ## rVRCc_server について
 
