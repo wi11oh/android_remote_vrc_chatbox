@@ -308,6 +308,7 @@ class MyFormState extends State<MyForm> {
 
 
     return Scaffold(
+      backgroundColor: Colors.white,
       extendBodyBehindAppBar: true,
       resizeToAvoidBottomInset: true,
       appBar: AppBar(
@@ -348,12 +349,14 @@ class MyFormState extends State<MyForm> {
       body: Column(
         children: <Widget>[
           Expanded(
+            
             child: ListView.builder(
               key: listviewKey,
               controller: scc,
               itemCount: items.length,
               itemBuilder: (context, index) {
                 return ListBody(
+                  
                   children: [
                     Container(
                       margin: const EdgeInsets.fromLTRB(10, 10, 10, 10),
