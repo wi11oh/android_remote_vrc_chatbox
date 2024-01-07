@@ -10,7 +10,7 @@ flutterってクロスプラットフォームやろ！！と思ったあなた�
 ## quest単機でも使える？
 使えるよ！！
 
-[事前準備>アプリ側 (IP設定)](## 事前準備) に入れるIPアドレスを [quest ip searcher](https://github.com/wi11oh/search_quest_IP) で取得してね
+[事前準備>アプリ側 (IP設定)](#事前準備) に入れるIPアドレスを [quest ip searcher](https://github.com/wi11oh/search_quest_IP) で取得してね
 
 ## windows側にも何かインストールする感じ？
 
