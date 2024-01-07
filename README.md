@@ -7,6 +7,10 @@ flutterってクロスプラットフォームやろ！！と思ったあなた�
 
 <img src="./readme_images/0.png" width="250px"> → <img src="./readme_images/m1.png" width="400px">
 
+## quest単機でも使える？
+使えるよ！！
+
+[事前準備>アプリ側 (IP設定)](## 事前準備) に入れるIPアドレスを [quest ip searcher](https://github.com/wi11oh/search_quest_IP) で取得してね
 
 ## windows側にも何かインストールする感じ？
 
@@ -14,9 +18,21 @@ flutterってクロスプラットフォームやろ！！と思ったあなた�
 
 でも一緒に配布してる rVRCc server ってやつをwindowsに入れるてるとクリップボード共有ができてスマホからiwasyncとかにURL貼り付けれるので便利！！！ 　【advansedモード】
 
+
+
+
+
 ## 事前準備
 
-VRC側のパイメニューでOSCをEnable（右側）にしておいてください
+### - アプリ側 (IP設定)
+初回はVRChatが動いているPCの(ローカル)IPアドレスの設定が必要です
+
+- 設定場所はドロワー最上部、IP設定をタップし、[IPアドレス](http://wi11oh.com/other/remote_vrc_chatbox_tips)を入力
+
+    <img src="./readme_images/9_ip.png" width="250px"> <img src="./readme_images/16.png" width="250px"> <img src="./readme_images/15.png" width="250px">
+
+### - VRChat側 (OSCを有効化)
+VRC側のパイメニューでOSCをEnabled（右側）にしておいてください
 
 <img src="./readme_images/pi1.png" width="250px"> <img src="./readme_images/pi2.png" width="250px"> <img src="./readme_images/pi3.png" width="250px">
 
@@ -87,13 +103,6 @@ windows側で rVRCc_server を動かしていて、且つ通信方式を 【adva
 
 <img src="./readme_images/13.png" width="400px"> <img src="./readme_images/14.png" width="250px">
 
-## IP設定について
-
-初回はVRChatが動いているPCの(ローカル)IPアドレスの設定が必要です
-
-- 設定場所はドロワー最上部、IP設定をタップし、[IPアドレス](http://wi11oh.com/other/remote_vrc_chatbox_tips)を入力
-
-<img src="./readme_images/9_ip.png" width="250px"> <img src="./readme_images/16.png" width="250px"> <img src="./readme_images/15.png" width="250px">
 
 ## TODO(今後予定)
 
