@@ -29,10 +29,10 @@ flutterってクロスプラットフォームやろ！！と思ったあなた�
 
 - 設定場所はドロワー最上部、IP設定をタップし、ローカルIPアドレスを入力
 
-    > [!TIP]
-    > PCVRの場合のIPアドレスの調べ方 -> [ここ](http://wi11oh.com/other/remote_vrc_chatbox_tips)を参考に取得
-    > <br>
-    > QUEST単機の場合のIPアドレスの調べ方 -> [ツール](https://github.com/wi11oh/search_quest_IP)を使って取得
+> [!TIP]
+> PCVRの場合のIPアドレスの調べ方 -> [ここ](http://wi11oh.com/other/remote_vrc_chatbox_tips)を参考に取得
+> <br>
+> QUEST単機の場合のIPアドレスの調べ方 -> [ツール](https://github.com/wi11oh/search_quest_IP)を使って取得
 
     <img src="./readme_images/9_ip.png" width="250px"> <img src="./readme_images/16.png" width="250px"> <img src="./readme_images/15.png" width="250px">
 
