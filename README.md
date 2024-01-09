@@ -34,7 +34,7 @@ flutterってクロスプラットフォームやろ！！と思ったあなた�
 > <br>
 > QUEST単機の場合のIPアドレスの調べ方 -> [ツール](https://github.com/wi11oh/search_quest_IP)を使って取得
 
-    <img src="./readme_images/9_ip.png" width="250px"> <img src="./readme_images/16.png" width="250px"> <img src="./readme_images/15.png" width="250px">
+<img src="./readme_images/9_ip.png" width="250px"> <img src="./readme_images/16.png" width="250px"> <img src="./readme_images/15.png" width="250px">
 
 ### - VRChat側 (OSCを有効化)
 VRC側のパイメニューでOSCをEnabled（右側）にしておいてください
