@@ -94,7 +94,7 @@ youtubeやブラウザで選択した文字を共有すると自動で起動し�
 
     <img src="./readme_images/10.png" width="250px"> <img src="./readme_images/11.jpg" width="250px"> <img src="./readme_images/12.jpg" width="250px">
 
-    - VRChatが 入力欄にURL等文字列を入力しクリップボードボタンを押すと、PC側でのクリップボードが更新され、貼り付けボタンで入力できます。
+    - 入力欄にURL等文字列を入力しクリップボードボタンを押すと、PC側での貼り付けボタンで入力ペーストできます。
     - iwasyncなどのプレイヤーにURLを貼ったり、ワールド検索などに使えます。
 
 - PC → スマホ
@@ -102,7 +102,7 @@ youtubeやブラウザで選択した文字を共有すると自動で起動し�
     <img src="./readme_images/17.jpg" width="250px"> <img src="./readme_images/18.png" width="250px"> <img src="./readme_images/19.png" width="250px">
 
     - 文字入力欄に何も入力していないとPC側のクリップボードを読み取り、スマホ側のクリップボードに挿入されます。
-    - TONなどの復活の呪文形式のセーブ機能があるワールドの呪文をスマホに素早く保存できます
+    - [T.O.N](https://vrchat.com/home/world/wrld_a61cdabe-1218-4287-9ffc-2a4d1414e5bd) などの復活の呪文形式のセーブ機能があるワールドの呪文をスマホに素早く保存できます
 
 ## rVRCc_server について
 
