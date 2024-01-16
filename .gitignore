@@ -57,3 +57,6 @@ env.g.dart
 /rVRCc_server/test.py
 /rVRCc_server/build
 /rVRCc_server/*.spec
+
+go.sum
+*.syso
