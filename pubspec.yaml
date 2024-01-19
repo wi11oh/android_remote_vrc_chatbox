@@ -1,10 +1,10 @@
 name: remote_vrc_chatbox
 
-description: A new Flutter project.
+description: for vrchat
 
 publish_to: 'none'
 
-version: 0.0.6
+version: 0.0.7
 
 environment:
   sdk: '>=3.1.5 <4.0.0'
@@ -25,8 +25,11 @@ dependencies:
   receive_sharing_intent: ^1.4.5
   speech_to_text: ^6.4.0
   shared_preferences: ^2.2.2
-  http: ^1.1.0
+  http: 0.13.0
   envied: ^0.5.2
+  translator: ^0.1.7
+  flutter_html:
+
 
 dev_dependencies:
   flutter_test:

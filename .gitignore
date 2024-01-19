@@ -50,8 +50,7 @@ app.*.map.json
 *.env
 env.g.dart
 
-/assets/sounds
-/assets/fonts
+/assets/
 
 /rVRCc_server/env
 /rVRCc_server/test.py
