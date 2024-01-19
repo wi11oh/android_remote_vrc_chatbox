@@ -25,10 +25,9 @@ dependencies:
   receive_sharing_intent: ^1.4.5
   speech_to_text: ^6.4.0
   shared_preferences: ^2.2.2
-  http: 0.13.0
+  http:
   envied: ^0.5.2
   translator: ^0.1.7
-  flutter_html:
 
 
 dev_dependencies:
