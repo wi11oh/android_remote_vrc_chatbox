@@ -125,8 +125,6 @@ void showTextModal(BuildContext context, TextEditingController txc) async {
                 if (txc.text != "") {
                   String textToTranslate = txc.text;
 
-                  txc.text = "翻訳中…";
-
                   String apiKey = Env.gcptl;
                   String targetLanguage = 'en';
                   String apiUrl = 'https://translation.googleapis.com/language/translate/v2';
@@ -151,9 +149,7 @@ void showTextModal(BuildContext context, TextEditingController txc) async {
                     );
                     txc.text = "";
                   }
-                  // Navigator.pop(context);
                 }
-
               },
             ),
           ],
@@ -174,13 +170,19 @@ void showTranslateModal({
       return AlertDialog(
         title: Column(
           crossAxisAlignment: CrossAxisAlignment.center,
+          mainAxisAlignment: MainAxisAlignment.center,
           children: [
             const Text("翻訳",
               style: TextStyle(
                 fontFamily: "NotoJP"
               ),
             ),
-            Image.asset("assets/images/color-short.png"),
+            SizedBox(
+              width: 150,
+              child: Image.asset("assets/images/tl_by_google.png",
+                fit: BoxFit.contain,
+              ),
+            )
           ],
         ),
         content: SelectableText(translatedText),
@@ -190,7 +192,11 @@ void showTranslateModal({
               FontAwesomeIcons.turnDown,
               size: 20,
             ),
-            label: const Text("翻訳結果を入力欄にペースト"),
+            label: const Text("翻訳を入力欄にペースト",
+              style: TextStyle(
+                fontFamily: "NotoJP"
+              ),
+            ),
             onPressed: () {
               txc.text = translatedText;
               Navigator.popUntil(context, (route) => route.isFirst);

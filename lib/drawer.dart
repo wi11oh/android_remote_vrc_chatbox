@@ -440,7 +440,7 @@ class InDrawerWidgetState extends State<InDrawerWidget> {
                 color: _isWebsocket ? const Color.fromARGB(255, 19, 19, 19) : const Color.fromARGB(255, 199, 199, 199),
               ),
             ),
-            subtitle: const Text("Websocketモードのみ"),
+            subtitle: const Text("advancedモードのみ"),
             onTap: (!(_isWebsocket)) ? null : () {
               Navigator.pop(context);
               widget.reconnectWebsocketCallback();
@@ -454,6 +454,7 @@ class InDrawerWidgetState extends State<InDrawerWidget> {
               );
             },
           ),
+          const Divider(),
           ListTile(
             title: const Text(
               "作者のリンク集",
@@ -466,6 +467,26 @@ class InDrawerWidgetState extends State<InDrawerWidget> {
             onTap: () {
               launchUrl(
                 Uri.parse("https://wi11oh.com/links/"),
+                mode: LaunchMode.externalApplication
+              );
+            },
+            trailing: const FaIcon(FontAwesomeIcons.upRightFromSquare,
+              size: 17,
+              color: Color.fromARGB(255, 19, 19, 19)
+            ),
+          ),
+          ListTile(
+            title: const Text(
+              "マニュアル・プライバシーポリシー",
+              style: TextStyle(
+                fontFamily: "NotoJP",
+                fontSize: 15,
+                color: Color.fromARGB(255, 19, 19, 19),
+              ),
+            ),
+            onTap: () {
+              launchUrl(
+                Uri.parse("https://github.com/wi11oh/android_remote_vrc_chatbox"),
                 mode: LaunchMode.externalApplication
               );
             },
