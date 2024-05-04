@@ -28,6 +28,7 @@ dependencies:
   http:
   envied: ^0.5.2
   translator: ^0.1.7
+  provider:
 
 
 dev_dependencies:

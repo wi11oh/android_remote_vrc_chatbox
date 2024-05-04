@@ -143,8 +143,6 @@ void showTextModal(BuildContext context, TextEditingController txc) async {
                       msg: "エラー status:${response.statusCode}",
                       gravity: ToastGravity.BOTTOM,
                       toastLength: Toast.LENGTH_LONG,
-                      backgroundColor: const Color.fromARGB(255, 19, 19, 19),
-                      textColor: Colors.white,
                       fontSize: 20
                     );
                     txc.text = "";

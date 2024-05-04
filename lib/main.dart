@@ -7,6 +7,7 @@ import 'dart:io';
 import 'dart:ui';
 
 import 'package:remote_vrc_chatbox/drawer.dart';
+import "package:remote_vrc_chatbox/themeProvider.dart";
 
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:remote_vrc_chatbox/text_modal.dart';
@@ -15,18 +16,33 @@ import 'package:web_socket_channel/web_socket_channel.dart';
 import 'package:receive_sharing_intent/receive_sharing_intent.dart';
 import 'package:osc/osc.dart';
 import 'package:speech_to_text/speech_to_text.dart';
+import 'package:provider/provider.dart';
 
 
 
-
+int theme = 0;
 
 
 void main() {
   WidgetsFlutterBinding.ensureInitialized();
-  runApp(const MyApp());
+  runApp(
+    ChangeNotifierProvider(
+      create: (context) => ThemeProvider(),
+      child: const MyApp(),
+    )
+  );
 }
 
+// class ThemeProvider with ChangeNotifier {
+//   bool _isDarkTheme = false;
 
+//   bool get isDarkTheme => _isDarkTheme;
+
+//   void toggleTheme() {
+//     _isDarkTheme = !_isDarkTheme;
+//     notifyListeners(); // Notify listeners that theme has changed
+//   }
+// }
 
 
 
@@ -35,10 +51,16 @@ class MyApp extends StatelessWidget {
   const MyApp({super.key});
   @override
   Widget build(BuildContext context) {
-    return const MaterialApp(
-      debugShowCheckedModeBanner: false,
-      home: MyForm(),
+    return Consumer<ThemeProvider>(
+      builder: (context, themeProvider, child) {
+        return MaterialApp(
+          debugShowCheckedModeBanner: false,
+          theme: themeProvider.isDarkTheme ? ThemeData.light() : ThemeData.dark(),
+          home: const MyForm(),
     );
+      },
+    );
+
   }
 }
 
@@ -68,6 +90,7 @@ class MyFormState extends State<MyForm> {
 
   String? _sharedText;
   TextEditingController txc = TextEditingController();
+  bool _isTextFieldEmpty = true;
   ScrollController scc = ScrollController();
   GlobalKey listviewKey = GlobalKey();
 
@@ -89,6 +112,8 @@ class MyFormState extends State<MyForm> {
     super.initState();
     readConnSet();
     connectToWebSocket();
+
+    txc.addListener(_updateTextFieldState);
 
     _intentDataStreamSubscription = ReceiveSharingIntent.getTextStream().listen((String value) {
       setState(() {
@@ -118,7 +143,17 @@ class MyFormState extends State<MyForm> {
     _streamSubscription.cancel();
     _intentDataStreamSubscription.cancel();
     _channel.sink.close();
+    txc.removeListener(_updateTextFieldState);
     super.dispose();
+  }
+
+
+
+
+  void _updateTextFieldState() {
+    setState(() {
+      _isTextFieldEmpty = txc.text.isEmpty;
+    });
   }
 
 
@@ -302,16 +337,16 @@ class MyFormState extends State<MyForm> {
   @override
   Widget build(BuildContext context) {
 
-    SystemChrome.setSystemUIOverlayStyle(
-      const SystemUiOverlayStyle(
-        systemNavigationBarColor: Colors.white
-      )
-    );
+
+    SystemChrome.setSystemUIOverlayStyle(const SystemUiOverlayStyle(
+      systemNavigationBarColor: Colors.white
+    ));
+
+
 
 
 
     return Scaffold(
-      backgroundColor: Colors.white,
       extendBodyBehindAppBar: true,
       resizeToAvoidBottomInset: true,
       appBar: AppBar(
@@ -321,10 +356,9 @@ class MyFormState extends State<MyForm> {
               sigmaX: 5,
               sigmaY: 5
             ),
-            child: Container(color: Colors.transparent,),),
+            child: Container(),),
         ),
         iconTheme: const IconThemeData(
-          color: Color.fromARGB(200, 19, 19, 19)
         ),
         centerTitle: true,
         // shape: const Border(
@@ -333,16 +367,30 @@ class MyFormState extends State<MyForm> {
         //     width: 2
         //   )
         // ),
-        backgroundColor: const Color.fromARGB(200, 255, 255, 255),
         elevation: 0.0,
         title: const Text(
           "remote vrc-chatbox",
           style: TextStyle(
-            color: Color.fromARGB(255, 19, 19, 19),
             fontSize: 24,
             fontFamily: "Din"
           )
         ),
+        actions: <Widget>[
+          IconButton(
+            onPressed: () {
+              Provider.of<ThemeProvider>(context, listen: false).toggleTheme();
+              setState(() {
+                SystemChrome.setSystemUIOverlayStyle(SystemUiOverlayStyle(
+                  systemNavigationBarColor: Theme.of(context).brightness == Brightness.light ? const Color(0xff1c1b1f) : Colors.white
+                ));
+              });
+            },
+            icon: const FaIcon(
+              FontAwesomeIcons.circleHalfStroke,
+              size: 20,
+            ))
+        ]
+        ,
       ),
       drawer: InDrawerWidget(
         reconnectWebsocketCallback: reconnectWebsocket,
@@ -352,14 +400,12 @@ class MyFormState extends State<MyForm> {
       body: Column(
         children: <Widget>[
           Expanded(
-            
             child: ListView.builder(
               key: listviewKey,
               controller: scc,
               itemCount: items.length,
               itemBuilder: (context, index) {
                 return ListBody(
-                  
                   children: [
                     Container(
                       margin: const EdgeInsets.fromLTRB(10, 10, 10, 10),
@@ -367,10 +413,8 @@ class MyFormState extends State<MyForm> {
                       height: 67,
                       decoration: BoxDecoration(
                         borderRadius: BorderRadius.circular(100),
-                        color: const Color.fromARGB(0, 19, 19, 19),
                         border: Border.all(
-                          color: const Color.fromARGB(255, 19, 19, 19),
-                          width: 2
+                          width: 2,
                         )
                       ),
                       child: Row(
@@ -424,7 +468,6 @@ class MyFormState extends State<MyForm> {
                             icon: const FaIcon(
                               FontAwesomeIcons.pen,
                               size: 22,
-                              color: Color.fromARGB(255, 19, 19, 19),
                             ),
                           )
                         ],
@@ -441,7 +484,6 @@ class MyFormState extends State<MyForm> {
         decoration: const BoxDecoration(
           border: Border(
             top: BorderSide(
-              color:  Color.fromARGB(255, 19, 19, 19),
             width: 2
             )
           )
@@ -530,7 +572,6 @@ class MyFormState extends State<MyForm> {
               padding: const EdgeInsets.fromLTRB(0, 10, 0, 10),
               elevation: 0.0,
               height: 60 + MediaQuery.of(context).viewInsets.bottom,
-              color: Colors.white,
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.start,
                 children: [
@@ -544,8 +585,8 @@ class MyFormState extends State<MyForm> {
                             decoration: BoxDecoration(
                               borderRadius: BorderRadius.circular(100),
                               border: Border.all(
-                                color: const Color.fromARGB(255, 19, 19, 19),
                                 width: 2,
+                                color: const Color.fromARGB(0, 0, 0, 0)
                               ),
                             ),
                             width: 40,
@@ -596,12 +637,14 @@ class MyFormState extends State<MyForm> {
                               left: 20,
                               child: Container(
                                 height: 80,
-                                decoration: const BoxDecoration(
-                                  color: Color.fromARGB(255, 19, 19, 19),
-                                  borderRadius: BorderRadius.only(
+                                decoration: BoxDecoration(
+                                  borderRadius: const BorderRadius.only(
                                     topLeft: Radius.circular(20),
                                     topRight: Radius.circular(20),
                                     bottomRight: Radius.circular(20)
+                                  ),
+                                  border: Border.all(
+                                    color: Colors.black
                                   )
                                 ),
                                 width: 250,
@@ -611,7 +654,6 @@ class MyFormState extends State<MyForm> {
                                     style: TextStyle(
                                       fontFamily: "NotoJP",
                                       fontSize: 15,
-                                      color: Colors.white
                                     ),
                                   ),
                                 )
@@ -624,8 +666,8 @@ class MyFormState extends State<MyForm> {
                         decoration: BoxDecoration(
                           borderRadius: BorderRadius.circular(100),
                           border: Border.all(
-                            color: const Color.fromARGB(255, 19, 19, 19),
                             width: 2,
+                            color:const Color.fromARGB(0, 0, 0, 0)
                           ),
                         ),
                         width: 40,
@@ -675,19 +717,17 @@ class MyFormState extends State<MyForm> {
                             enabledBorder: OutlineInputBorder(
                               borderRadius: BorderRadius.circular(20),
                               borderSide: const BorderSide(
-                                color: Color.fromARGB(255, 19, 19, 19),
                                 width: 2
                               )
                             ),
                             focusedBorder: OutlineInputBorder(
                               borderRadius: BorderRadius.circular(20),
                               borderSide: const BorderSide(
-                                color: Color.fromARGB(255, 19, 19, 19),
                                 width: 2
                               )
                             ),
                             prefixIcon: IconButton(
-                              onPressed: (txc.text != "")
+                              onPressed: (!(_isTextFieldEmpty))
                                   ? () async {
                                       showTextModal(context, txc);
                                     }
@@ -695,19 +735,27 @@ class MyFormState extends State<MyForm> {
                               splashRadius: 20,
                               iconSize: 15,
                               padding: EdgeInsets.zero,
-                              color: (txc.text != "")
-                                  ? const Color.fromARGB(255, 19, 19, 19)
-                                  : const Color.fromARGB(128, 19, 19, 19),
+                              color: (!(_isTextFieldEmpty))
+                                ? Theme.of(context).brightness == Brightness.light
+                                    ? const Color.fromARGB(255, 39, 39, 39)
+                                    : Colors.white
+                                : Theme.of(context).brightness == Brightness.light
+                                    ? const Color.fromARGB(255, 39, 39, 39)
+                                    : Colors.black,
                               icon: const FaIcon(FontAwesomeIcons.ellipsis),
                             ),
                             suffixIcon: IconButton(
                               splashRadius: 20,
-                              color: (txc.text != "")
-                                  ? const Color.fromARGB(255, 19, 19, 19)
-                                  : const Color.fromARGB(128, 19, 19, 19),
+                              color: (!(_isTextFieldEmpty))
+                                ? Theme.of(context).brightness == Brightness.light
+                                    ? const Color.fromARGB(255, 39, 39, 39)
+                                    : Colors.white
+                                : Theme.of(context).brightness == Brightness.light
+                                    ? const Color.fromARGB(255, 39, 39, 39)
+                                    : Colors.black,
                               iconSize: 20,
                               padding: EdgeInsets.zero,
-                              onPressed: (txc.text != "") ? submit2 : null,
+                              onPressed: (!(_isTextFieldEmpty)) ? submit2 : null,
                               icon: const FaIcon(FontAwesomeIcons.paperPlane),
                             ),
                           ),

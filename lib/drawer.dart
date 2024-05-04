@@ -64,11 +64,10 @@ class InDrawerWidgetState extends State<InDrawerWidget> {
     return showDialog(
       context: outerContext,
       barrierDismissible: false,
-      barrierColor: Colors.black87,
       builder: (BuildContext context) {
         return AlertDialog(
           title: const Text("アプリを終了します"),
-          content: Text("IPを$valueに設定しました\n再起動をしてください"),
+          content: Text("IPを$valueに設定しました\n再起動をしてください",style: Theme.of(context).textTheme.bodyMedium,),
           actions: [
             TextButton(
               child: const Text(
@@ -165,7 +164,6 @@ class InDrawerWidgetState extends State<InDrawerWidget> {
                       ),
                       hintText: '例 192.168.0.10',
                       suffixIcon: IconButton(
-                        color: const Color.fromARGB(255, 19, 19, 19),
                         onPressed:() {
 
                           final ipv4Regex = RegExp(
@@ -208,8 +206,6 @@ class InDrawerWidgetState extends State<InDrawerWidget> {
                               msg: "有効なIPv4アドレスではありません",
                               gravity: ToastGravity.BOTTOM,
                               toastLength: Toast.LENGTH_LONG,
-                              backgroundColor: const Color.fromARGB(255, 19, 19, 19),
-                              textColor: Colors.white,
                               fontSize: 20
                             );
                           }
@@ -219,14 +215,12 @@ class InDrawerWidgetState extends State<InDrawerWidget> {
                       enabledBorder: OutlineInputBorder(
                         borderRadius: BorderRadius.circular(100),
                         borderSide: const BorderSide(
-                          color: Color.fromARGB(255, 19, 19, 19),
                           width: 2
                         )
                       ),
                       focusedBorder: OutlineInputBorder(
                         borderRadius: BorderRadius.circular(100),
                         borderSide: const BorderSide(
-                          color: Color.fromARGB(255, 19, 19, 19),
                           width: 2
                         )
                       )
@@ -272,8 +266,6 @@ class InDrawerWidgetState extends State<InDrawerWidget> {
                           msg: "有効なIPv4アドレスではありません",
                           gravity: ToastGravity.BOTTOM,
                           toastLength: Toast.LENGTH_LONG,
-                          backgroundColor: const Color.fromARGB(255, 19, 19, 19),
-                          textColor: Colors.white,
                           fontSize: 20
                         );
                       }
@@ -285,11 +277,11 @@ class InDrawerWidgetState extends State<InDrawerWidget> {
                       child: RichText(
                         text: TextSpan(
                           text: "設定した後はアプリを再起動してください",
-                          style: const TextStyle(color: Color.fromARGB(255, 19, 19, 19), fontFamily: "NotoJP"),
+                          style: Theme.of(context).textTheme.bodyMedium,
                           children: <TextSpan>[
                             const TextSpan(
                               text: "\n\nローカルIPの調べ方は ",
-                              style: TextStyle(color: Color.fromARGB(255, 19, 19, 19), fontFamily: "NotoJP")
+                              style: TextStyle(fontFamily: "NotoJP")
                             ),
                             TextSpan(
                               text: "ここ",
@@ -303,7 +295,7 @@ class InDrawerWidgetState extends State<InDrawerWidget> {
                             ),
                             const TextSpan(
                                 text: " を参照",
-                                style: TextStyle(color: Color.fromARGB(255, 19, 19, 19), fontFamily: "NotoJP")
+                                style: TextStyle(fontFamily: "NotoJP")
                             ),
                           ]
                         )
@@ -333,7 +325,6 @@ class InDrawerWidgetState extends State<InDrawerWidget> {
             decoration: BoxDecoration(
               border: Border(
                 bottom: BorderSide(
-                  color: Color.fromARGB(255, 19, 19, 19),
                   width: 2
                 )
               )
@@ -354,7 +345,6 @@ class InDrawerWidgetState extends State<InDrawerWidget> {
                   style: TextStyle(
                     fontFamily: "Din",
                     fontSize: 8,
-                    color: Color.fromARGB(255, 128, 128, 128)
                   )
                 ),
               ],
@@ -366,10 +356,9 @@ class InDrawerWidgetState extends State<InDrawerWidget> {
               style: TextStyle(
                 fontFamily: "NotoJP",
                 fontSize: 15,
-                color: Color.fromARGB(255, 19, 19, 19),
               ),
             ),
-            subtitle: const Text("VRChatが起動しているPCのLocal-IP"),
+            subtitle: const Text("VRChatが起動しているPC、または単機の場合はquestのLocal-IP"),
             onTap: () {
               _showSettingDialog(context);
             },
@@ -380,7 +369,6 @@ class InDrawerWidgetState extends State<InDrawerWidget> {
               style: TextStyle(
                 fontFamily: "NotoJP",
                 fontSize: 15,
-                color: Color.fromARGB(255, 19, 19, 19),
               ),
             ),
             subtitle: const Text("nomal <--> advanced"),
@@ -437,7 +425,13 @@ class InDrawerWidgetState extends State<InDrawerWidget> {
               style: TextStyle(
                 fontFamily: "NotoJP",
                 fontSize: 15,
-                color: _isWebsocket ? const Color.fromARGB(255, 19, 19, 19) : const Color.fromARGB(255, 199, 199, 199),
+                color: _isWebsocket
+                ? (Theme.of(context).brightness == Brightness.light
+                  ? Colors.black
+                  : Colors.white)
+                : (Theme.of(context).brightness == Brightness.light
+                  ? const Color.fromARGB(255, 216, 216, 216)
+                  : Colors.grey[850])
               ),
             ),
             subtitle: const Text("advancedモードのみ"),
@@ -461,7 +455,6 @@ class InDrawerWidgetState extends State<InDrawerWidget> {
               style: TextStyle(
                 fontFamily: "NotoJP",
                 fontSize: 15,
-                color: Color.fromARGB(255, 19, 19, 19),
               ),
             ),
             onTap: () {
@@ -472,7 +465,6 @@ class InDrawerWidgetState extends State<InDrawerWidget> {
             },
             trailing: const FaIcon(FontAwesomeIcons.upRightFromSquare,
               size: 17,
-              color: Color.fromARGB(255, 19, 19, 19)
             ),
           ),
           ListTile(
@@ -481,7 +473,6 @@ class InDrawerWidgetState extends State<InDrawerWidget> {
               style: TextStyle(
                 fontFamily: "NotoJP",
                 fontSize: 15,
-                color: Color.fromARGB(255, 19, 19, 19),
               ),
             ),
             onTap: () {
@@ -492,7 +483,6 @@ class InDrawerWidgetState extends State<InDrawerWidget> {
             },
             trailing: const FaIcon(FontAwesomeIcons.upRightFromSquare,
               size: 17,
-              color: Color.fromARGB(255, 19, 19, 19)
             ),
           ),
           ListTile(
@@ -501,7 +491,6 @@ class InDrawerWidgetState extends State<InDrawerWidget> {
               style: TextStyle(
                 fontFamily: "NotoJP",
                 fontSize: 15,
-                color: Color.fromARGB(255, 19, 19, 19),
               ),
             ),
             onTap: () {
