@@ -7,6 +7,7 @@ import 'dart:io';
 import 'dart:ui';
 
 import 'package:remote_vrc_chatbox/drawer.dart';
+import 'package:remote_vrc_chatbox/sound.dart';
 import "package:remote_vrc_chatbox/themeProvider.dart";
 
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
@@ -18,10 +19,7 @@ import 'package:osc/osc.dart';
 import 'package:speech_to_text/speech_to_text.dart';
 import 'package:provider/provider.dart';
 
-
-
 int theme = 0;
-
 
 void main() {
   WidgetsFlutterBinding.ensureInitialized();
@@ -33,20 +31,6 @@ void main() {
   );
 }
 
-// class ThemeProvider with ChangeNotifier {
-//   bool _isDarkTheme = false;
-
-//   bool get isDarkTheme => _isDarkTheme;
-
-//   void toggleTheme() {
-//     _isDarkTheme = !_isDarkTheme;
-//     notifyListeners(); // Notify listeners that theme has changed
-//   }
-// }
-
-
-
-
 class MyApp extends StatelessWidget {
   const MyApp({super.key});
   @override
@@ -57,28 +41,17 @@ class MyApp extends StatelessWidget {
           debugShowCheckedModeBanner: false,
           theme: themeProvider.isDarkTheme ? ThemeData.light() : ThemeData.dark(),
           home: const MyForm(),
-    );
+        );
       },
     );
-
   }
 }
-
-
-
-
-
 
 class MyForm extends StatefulWidget {
   const MyForm({Key? key}) : super(key: key);
   @override
   MyFormState createState() => MyFormState();
 }
-
-
-
-
-
 
 class MyFormState extends State<MyForm> {
 
@@ -101,14 +74,13 @@ class MyFormState extends State<MyForm> {
   SpeechToText speechToText = SpeechToText();
   bool isListenning = false;
 
+  Timer? _oscTypingTimer;
+  bool _isTypingEnabled = false;
 
-
-
-
+  SeSound se = SeSound();
 
   @override
   void initState() {
-
     super.initState();
     readConnSet();
     connectToWebSocket();
@@ -133,13 +105,23 @@ class MyFormState extends State<MyForm> {
       });
     });
 
+
+    _oscTypingTimer = Timer.periodic(const Duration(seconds: 3), (timer) {
+      if (!_isTextFieldEmpty && _isTypingEnabled) {
+        _sendTypingOsc();
+      }
+    });
   }
 
-
-
+  void _onTypingToggle(bool enabled) {
+    setState(() {
+      _isTypingEnabled = enabled;
+    });
+  }
 
   @override
   void dispose() {
+    _oscTypingTimer?.cancel();
     _streamSubscription.cancel();
     _intentDataStreamSubscription.cancel();
     _channel.sink.close();
@@ -147,20 +129,13 @@ class MyFormState extends State<MyForm> {
     super.dispose();
   }
 
-
-
-
   void _updateTextFieldState() {
     setState(() {
       _isTextFieldEmpty = txc.text.isEmpty;
     });
   }
 
-
-
-
   Future<void> connectToWebSocket() async {
-
     String value = "192.168.0.10";
 
     try {
@@ -171,7 +146,6 @@ class MyFormState extends State<MyForm> {
     }
 
     _ipAddr = value;
-
 
     debugPrint("connect  $value");
     _channel = WebSocketChannel.connect(Uri.parse("ws://$value:41129"));
@@ -195,25 +169,16 @@ class MyFormState extends State<MyForm> {
 
   }
 
-
-
-
   Future<void> reconnectWebsocket() async {
     _channel.sink.close();
     await Future.delayed(const Duration(seconds: 5), () {});
     connectToWebSocket();
   }
 
-
-
-
   void disconnectWebsocket() async {
     _channel.sink.close();
     debugPrint("disconnect");
   }
-
-
-
 
   void websocket(text) {
     try {
@@ -223,11 +188,7 @@ class MyFormState extends State<MyForm> {
     }
   }
 
-
-
-
   Future<void> readConnSet() async {
-
     bool value = false;
     try {
       final p = await SharedPreferences.getInstance();
@@ -239,11 +200,7 @@ class MyFormState extends State<MyForm> {
     setState(() {
       _isWebsocket = value;
     });
-
   }
-
-
-
 
   void _addItem(String text,String mode) {
     setState(() {
@@ -252,19 +209,6 @@ class MyFormState extends State<MyForm> {
       modes.add(mode);
     });
   }
-
-
-
-
-  // bool checkListviewOverflow() {
-  //   final RenderBox listviewRB = listviewKey.currentContext!.findRenderObject() as RenderBox;
-  //   final lvHeight = listviewRB.size.height;
-  //   final lvContentHeight = listviewRB.paintBounds.size.height;
-  //   return lvContentHeight >= lvHeight;
-  // }
-
-
-
 
   void addViewAndAnim(String text, String historyViewMode) {
     _addItem(text, historyViewMode);
@@ -276,13 +220,11 @@ class MyFormState extends State<MyForm> {
     );
   }
 
-
-
-
-  send (Map payload) {
+  void send(Map payload) {
     final payloadjson = jsonEncode(payload);
     String historyViewMode = "unknown";
     if (payload["mode"] == "nomal" && payload["textmsg"] != "") {
+      se.playSe(SeSoundIds.send);
       if (_isWebsocket) {
         historyViewMode = "text (advanced/WS)";
         websocket(payloadjson);
@@ -309,10 +251,12 @@ class MyFormState extends State<MyForm> {
       debugPrint("empty");
     }
   }
-  void submit (Map payload) {
+
+  void submit(Map payload) {
     send(payload);
   }
-  void submit2 () {
+
+  void submit2() {
     Map<String, String> payload = {
       "mode": "nomal",
       "textmsg": txc.text
@@ -320,36 +264,35 @@ class MyFormState extends State<MyForm> {
     send(payload);
   }
 
-
-
-
   void pressedit(i) {
     setState(() {
       txc.text = items[i];
     });
   }
 
-
-
-
-
+  void _sendTypingOsc() {
+    final message = OSCMessage("/chatbox/typing", arguments: [true]);
+    const port = 9000;
+    RawDatagramSocket.bind(InternetAddress.anyIPv4, 0)
+    .then((socket) => socket.send(message.toBytes(), InternetAddress(_ipAddr), port))
+    .catchError((e) {
+      debugPrint('Error: $e');
+      return -1;
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
-
-
     SystemChrome.setSystemUIOverlayStyle(const SystemUiOverlayStyle(
       systemNavigationBarColor: Colors.white
     ));
 
-
-
-
-
     return Scaffold(
       extendBodyBehindAppBar: true,
       resizeToAvoidBottomInset: true,
+      backgroundColor: (Theme.of(context).brightness == Brightness.light) ? const Color(0xfff3edf7) : const Color(0xff221c27),
       appBar: AppBar(
+        backgroundColor:(Theme.of(context).brightness == Brightness.light) ? const Color(0xfff3edf7) : const Color(0xff221c27),
         flexibleSpace: ClipRect(
           child: BackdropFilter(
             filter: ImageFilter.blur(
@@ -361,12 +304,6 @@ class MyFormState extends State<MyForm> {
         iconTheme: const IconThemeData(
         ),
         centerTitle: true,
-        // shape: const Border(
-        //   bottom: BorderSide(
-        //     color: Color.fromARGB(255, 19, 19, 19),
-        //     width: 2
-        //   )
-        // ),
         elevation: 0.0,
         title: const Text(
           "remote vrc-chatbox",
@@ -381,7 +318,7 @@ class MyFormState extends State<MyForm> {
               Provider.of<ThemeProvider>(context, listen: false).toggleTheme();
               setState(() {
                 SystemChrome.setSystemUIOverlayStyle(SystemUiOverlayStyle(
-                  systemNavigationBarColor: Theme.of(context).brightness == Brightness.light ? const Color(0xff1c1b1f) : Colors.white
+                  systemNavigationBarColor: Theme.of(context).brightness == Brightness.light ? const Color(0xff1c1b1f) : const Color(0xfff3edf7)
                 ));
               });
             },
@@ -395,7 +332,8 @@ class MyFormState extends State<MyForm> {
       drawer: InDrawerWidget(
         reconnectWebsocketCallback: reconnectWebsocket,
         releadConnSetting: readConnSet,
-        disconnectWebsocket: disconnectWebsocket
+        disconnectWebsocket: disconnectWebsocket,
+        onTypingToggle: _onTypingToggle,
       ),
       body: Column(
         children: <Widget>[
@@ -415,7 +353,7 @@ class MyFormState extends State<MyForm> {
                         borderRadius: BorderRadius.circular(100),
                         border: Border.all(
                           width: 2,
-                        )
+                        ),
                       ),
                       child: Row(
                         mainAxisAlignment: MainAxisAlignment.spaceBetween,
@@ -491,83 +429,6 @@ class MyFormState extends State<MyForm> {
         child: Stack(
           clipBehavior: Clip.none,
           children: [
-            // Positioned(
-            //   top: -50,
-            //   left: ((MediaQuery.of(context).size.width)-(MediaQuery.of(context).size.width * 0.9))/2,
-            //   child: Container(
-            //     width: MediaQuery.of(context).size.width * 0.9,
-            //     height: 40,
-            //     padding: const EdgeInsets.fromLTRB(10, 0, 10, 0),
-            //     decoration: BoxDecoration(
-            //       borderRadius:BorderRadius.circular(20),
-            //       color: const Color.fromARGB(255, 19, 19, 19),
-            //     ),
-            //     child: Row(
-            //       mainAxisAlignment: MainAxisAlignment.spaceAround,
-            //       crossAxisAlignment: CrossAxisAlignment.center,
-            //       children: [
-            //         TextButton.icon(
-            //           style: const ButtonStyle(
-            //             padding: MaterialStatePropertyAll(EdgeInsets.fromLTRB(2, 0, 2, 0)),
-            //           ),
-            //           onPressed: ()  {
-            //             debugPrint("clip");
-            //             // final data = ClipboardData(text: txc.text);
-            //             // await Clipboard.setData(data);
-            //           },
-            //           icon: const FaIcon(
-            //             FontAwesomeIcons.solidCopy,
-            //             size: 15,
-            //             color: Colors.white,
-            //           ),
-            //           label: const Text(
-            //             "コピー",
-            //             style: TextStyle(
-            //               fontSize: 15,
-            //               color: Colors.white
-            //             ),
-            //           ),
-            //         ),
-            //         TextButton.icon(
-            //           style: const ButtonStyle(
-            //             padding: MaterialStatePropertyAll(EdgeInsets.fromLTRB(2, 0, 2, 0)),
-            //           ),
-            //           onPressed: () {},
-            //           icon: const FaIcon(
-            //             FontAwesomeIcons.solidClipboard,
-            //             size: 15,
-            //             color: Colors.white,
-            //           ),
-            //           label: const Text(
-            //             "貼り付け",
-            //             style: TextStyle(
-            //               fontSize: 15,
-            //               color: Colors.white
-            //             ),
-            //           ),
-            //         ),
-            //         TextButton.icon(
-            //           style: const ButtonStyle(
-            //             padding: MaterialStatePropertyAll(EdgeInsets.fromLTRB(2, 0, 2, 0)),
-            //           ),
-            //           onPressed: () {},
-            //           icon: const FaIcon(
-            //             FontAwesomeIcons.language,
-            //             size: 15,
-            //             color: Colors.white,
-            //           ),
-            //           label: const Text(
-            //             "翻訳",
-            //             style: TextStyle(
-            //               fontSize: 15,
-            //               color: Colors.white
-            //             ),
-            //           ),
-            //         ),
-            //       ],
-            //     ),
-            //   ),
-            // ),
             BottomAppBar(
               padding: const EdgeInsets.fromLTRB(0, 10, 0, 10),
               elevation: 0.0,
